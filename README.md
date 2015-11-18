@@ -8,3 +8,6 @@ This is the R package used for this project. The Java and data packages will be 
 This is for educational and research purposes only. 
 
 http://bioinformatics.mdanderson.org
+
+More documentation coming soon!
+
