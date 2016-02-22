@@ -23,37 +23,37 @@ convertFileToList <- function(theRDataFile)
 	dataList
 }
 
-readMatrix_internal <- function(theGeneEqList, theGeneReportDir, theRemoveDupFlag, theMethodString, theVerboseFlag, theDeltaFunction)
+readMatrix_internal <- function(theGeneEqList, theZipFile, theRemoveDupFlag, theMethodString, theVerboseFlag, theDeltaFunction)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	results <- NULL
-	jObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/GetDataMatrix", file.path(theGeneReportDir, "combined"))
-	result <- .jcall(jObj, returnSig = "Z", method=theMethodString, 
+	jObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
+	result <- .jcall(jObj, returnSig = "Lorg/mda/bcb/tcgagsdata/retrieve/GetDataMatrix;", method=theMethodString, 
 									 .jarray(as.vector(as.character(theGeneEqList))))
-	if(TRUE==result)
+	if(FALSE==is.jnull(result))
 	{
-		results <- matrixWithIssues(jObj$mGenesBySamplesValues, nrow=length(jObj$mGenes))
-		colnames(results) <- jObj$mSamples
-		rownames(results) <- jObj$mGenes
-	}
-	if (theRemoveDupFlag==TRUE)
-	{
-		rNames <- rownames(results)
-		cNames <- colnames(results)[!duplicated(colnames(results))]
-		results <- results[,!duplicated(colnames(results))]
-		# have to do this as above line removes "matrixness" from matrix with single row
-		results <- matrixWithIssues(as.vector(unlist(results)), nrow=length(rNames))
-		colnames(results) <- cNames
-		rownames(results) <- rNames
-	}
-	if(!is.null(theDeltaFunction))
-	{
-		results <- theDeltaFunction(results, theGeneReportDir=theGeneReportDir, theVerboseFlag=theVerboseFlag)
+		results <- matrixWithIssues(result$mGenesBySamplesValues, nrow=length(result$mGenes))
+		colnames(results) <- result$mSamples
+		rownames(results) <- result$mGenes
+		if (theRemoveDupFlag==TRUE)
+		{
+			rNames <- rownames(results)
+			cNames <- colnames(results)[!duplicated(colnames(results))]
+			results <- results[,!duplicated(colnames(results))]
+			# have to do this as above line removes "matrixness" from matrix with single row
+			results <- matrixWithIssues(as.vector(unlist(results)), nrow=length(rNames))
+			colnames(results) <- cNames
+			rownames(results) <- rNames
+		}
+		if(!is.null(theDeltaFunction))
+		{
+			results <- theDeltaFunction(results, theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
+		}
 	}
 	results
 }
 
-readSampleAnnotations_internal <- function (theSamples, theDataDir, theVerboseFlag, theUsePatientsFlag)
+readSampleAnnotations_internal <- function (theSamples, theZipFile, theVerboseFlag, theUsePatientsFlag)
 {
 	# barcode (sample)
 	### theSamples
@@ -64,16 +64,16 @@ readSampleAnnotations_internal <- function (theSamples, theDataDir, theVerboseFl
 	diseaseList <- NULL
 	if (FALSE==theUsePatientsFlag)
 	{
-		diseaseList <- getMetadataPop_BarcodeDisease_forList(theSamples, theDataDir, theVerboseFlag)
+		diseaseList <- getMetadataPop_BarcodeDisease_forList(theSamples, theZipFile, theVerboseFlag)
 	}
 	else
 	{
-		diseaseList <- getMetadataPop_PatientDisease_forList(theSamples, theDataDir, theVerboseFlag)
+		diseaseList <- getMetadataPop_PatientDisease_forList(theSamples, theZipFile, theVerboseFlag)
 	}
 	# disease string
 	diseaseStringList <- as.vector(unlist(lapply(diseaseList, function(theId)
 	{
-		getMetadataTcga_Name_Disease(theId, theDataDir, theVerboseFlag)
+		getMetadataTcga_Name_Disease(theId, theZipFile, theVerboseFlag)
 	})))
 	# sample type code
 	# sample type string
@@ -81,10 +81,10 @@ readSampleAnnotations_internal <- function (theSamples, theDataDir, theVerboseFl
 	typeStringList <- NULL
 	if (FALSE==theUsePatientsFlag)
 	{
-		typeCodeList <- getMetadataPop_BarcodeSamplecode_forList(theSamples, theDataDir, theVerboseFlag)
+		typeCodeList <- getMetadataPop_BarcodeSamplecode_forList(theSamples, theZipFile, theVerboseFlag)
 		typeStringList <- as.vector(unlist(lapply(typeCodeList, function(theId)
 		{
-			getMetadataTcga_Name_SampleType(theId, theDataDir, theVerboseFlag)
+			getMetadataTcga_Name_SampleType(theId, theZipFile, theVerboseFlag)
 		})))
 	}
 	else
@@ -109,13 +109,13 @@ readSampleAnnotations_internal <- function (theSamples, theDataDir, theVerboseFl
 													stringsAsFactors=FALSE)
 }
 
-readProbeAnnotations_internal <- function (theGeneEqList, theMetadataFunction, theDataDir, theVerboseFlag, 
+readProbeAnnotations_internal <- function (theGeneEqList, theMetadataFunction, theZipFile, theVerboseFlag, 
 																					 theGeneEqToGeneMap)
 {
 	# get metadata
 	metadataList <- as.vector(unlist(lapply(theGeneEqList, function(theGeneEq)
 	{
-		theMetadataFunction(theGeneEq, theDataDir=theDataDir, theVerboseFlag=theVerboseFlag)
+		theMetadataFunction(theGeneEq, theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
 	})))
 	names(metadataList) <- theGeneEqList
 	#probe id
@@ -184,12 +184,12 @@ readProbeAnnotations_internal <- function (theGeneEqList, theMetadataFunction, t
 													stringsAsFactors=FALSE)
 }
 
-readGeneAnnotations_internal <- function (theGeneEqList, theMetadataFunction, theDataDir, theVerboseFlag)
+readGeneAnnotations_internal <- function (theGeneEqList, theMetadataFunction, theZipFile, theVerboseFlag)
 {
 	# get metadata
 	metadataList <- as.vector(unlist(lapply(theGeneEqList, function(theGeneEq)
 	{
-		theMetadataFunction(theGeneEq, theDataDir=theDataDir, theVerboseFlag=theVerboseFlag)
+		theMetadataFunction(theGeneEq, theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
 	})))
 	#gene symbol
 	geneSymbol <- as.vector(unlist(lapply(metadataList, function(theGene) { theGene@mGeneSymbol })))
@@ -211,7 +211,7 @@ readGeneAnnotations_internal <- function (theGeneEqList, theMetadataFunction, th
 													stringsAsFactors=FALSE)
 }
 
-readHsaMimatAnnotations_internal <- function (theGeneEqList, theMetadataFunction, theDataDir, theVerboseFlag, theGeneEqToGeneMap)
+readHsaMimatAnnotations_internal <- function (theGeneEqList, theMetadataFunction, theZipFile, theVerboseFlag, theGeneEqToGeneMap)
 {
 	# TODO: redo using theMetadataFunction when available
 	#shortHsaId
@@ -282,23 +282,23 @@ readHsaMimatAnnotations_internal <- function (theGeneEqList, theMetadataFunction
 													stringsAsFactors=FALSE)
 }
 
-readTissueAnnotations_internal <- function(theSampleIds, theDataDir, theVerboseFlag, theUsePatientsFlag)
+readTissueAnnotations_internal <- function(theSampleIds, theZipFile, theVerboseFlag, theUsePatientsFlag)
 {
 	# diseaseType
 	diseaseType <- NULL
 	if(FALSE==theUsePatientsFlag)
 	{
-		diseaseType <- getMetadataPop_BarcodeDisease_forList(theSampleIds, theDataDir=theDataDir, theVerboseFlag=theVerboseFlag)
+		diseaseType <- getMetadataPop_BarcodeDisease_forList(theSampleIds, theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	else
 	{
-		diseaseType <- getMetadataPop_PatientDisease_forList(theSampleIds, theDataDir=theDataDir, theVerboseFlag=theVerboseFlag)
+		diseaseType <- getMetadataPop_PatientDisease_forList(theSampleIds, theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	diseaseType <- unique(sort(as.vector(unlist(diseaseType[names(diseaseType) %in% theSampleIds]))))
 	# diseaseString
 	diseaseString <- as.vector(unlist(lapply(diseaseType, function(theId)
 	{
-		getMetadataTcga_Name_Disease(theId, theDataDir, theVerboseFlag)
+		getMetadataTcga_Name_Disease(theId, theZipFile, theVerboseFlag)
 	})))
 	# plotColor
 	plotColor <- getColorsForDiseases(diseaseType)
@@ -310,7 +310,7 @@ readTissueAnnotations_internal <- function(theSampleIds, theDataDir, theVerboseF
 }
 
 buildGeneReportDataObject_internal <- function(theGeneEqList, 
-																							 theGeneReportDir, theDataDir,
+																							 theZipFile,
 																							 theReadMatrixFunction, theRemoveDupFlag, 
 																							 theProbeMetadataFunction, theGeneMetadataFunction, theHsaMimatMetadataFunction, 
 																							 theVerboseFlag, theDeltaFunction)
@@ -324,24 +324,24 @@ buildGeneReportDataObject_internal <- function(theGeneEqList,
 		eqToGeneMap <- theGeneEqList
 	}
 	#	mData="matrix",
-	dataMatrix <- readMatrix_internal(geneEqVector, theGeneReportDir, theRemoveDupFlag, theReadMatrixFunction, theVerboseFlag=theVerboseFlag, theDeltaFunction=theDeltaFunction)
+	dataMatrix <- readMatrix_internal(geneEqVector, theZipFile, theRemoveDupFlag, theReadMatrixFunction, theVerboseFlag=theVerboseFlag, theDeltaFunction=theDeltaFunction)
 	#	mSampleAnnotations="data.frame",
-	sampleAnnotations <- readSampleAnnotations_internal(colnames(dataMatrix), theDataDir, theVerboseFlag, !is.null(theDeltaFunction))
+	sampleAnnotations <- readSampleAnnotations_internal(colnames(dataMatrix), theZipFile, theVerboseFlag, !is.null(theDeltaFunction))
 	#	mTissueAnnotations="data.frame"))
-	tissueAnnotations <- readTissueAnnotations_internal(colnames(dataMatrix), theDataDir, theVerboseFlag, !is.null(theDeltaFunction))
+	tissueAnnotations <- readTissueAnnotations_internal(colnames(dataMatrix), theZipFile, theVerboseFlag, !is.null(theDeltaFunction))
 	#	mGenomeAnnotations="data.frame",
 	genomeAnnotations <- NULL
 	if (!is.null(theProbeMetadataFunction))
 	{
-		genomeAnnotations <- readProbeAnnotations_internal(rownames(dataMatrix), theProbeMetadataFunction, theDataDir, theVerboseFlag, eqToGeneMap)
+		genomeAnnotations <- readProbeAnnotations_internal(rownames(dataMatrix), theProbeMetadataFunction, theZipFile, theVerboseFlag, eqToGeneMap)
 	}
 	else if (!is.null(theGeneMetadataFunction))
 	{
-		genomeAnnotations <- readGeneAnnotations_internal(rownames(dataMatrix), theGeneMetadataFunction, theDataDir, theVerboseFlag)
+		genomeAnnotations <- readGeneAnnotations_internal(rownames(dataMatrix), theGeneMetadataFunction, theZipFile, theVerboseFlag)
 	}
 	else if (!is.null(theHsaMimatMetadataFunction))
 	{
-		genomeAnnotations <- readHsaMimatAnnotations_internal(rownames(dataMatrix), theHsaMimatMetadataFunction, theDataDir, theVerboseFlag, eqToGeneMap)
+		genomeAnnotations <- readHsaMimatAnnotations_internal(rownames(dataMatrix), theHsaMimatMetadataFunction, theZipFile, theVerboseFlag, eqToGeneMap)
 	}
 	#setClass("ReadGeneList", representation(
 	#	mData="matrix",
@@ -352,13 +352,13 @@ buildGeneReportDataObject_internal <- function(theGeneEqList,
 }
 
 getDataObj_internal <- function(theGeneEqList, 
-																theGeneReportDir, theDataDir,
+																theZipFile,
 																theReadMatrixFunction, theRemoveDupFlag, 
 																theProbeMetadataFunction, theGeneMetadataFunction, theHsaMimatMetadataFunction,
 																theVerboseFlag, theRDataFile, theListOnlyFlag, theDeltaFunction)
 {
 	dataObject <- buildGeneReportDataObject_internal(theGeneEqList, 
-																									 theGeneReportDir, theDataDir,
+																									 theZipFile,
 																									 theReadMatrixFunction, theRemoveDupFlag,
 																									 theProbeMetadataFunction, theGeneMetadataFunction, theHsaMimatMetadataFunction,
 																									 theVerboseFlag, theDeltaFunction)
@@ -391,12 +391,12 @@ loadDataObject <- function(theRDataFile)
 #### use gene eq
 ####
 
-getDataObject_GeneSymbol_RnaSeq2 <- function(theGeneEqList, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getDataObject_GeneSymbol_RnaSeq2 <- function(theGeneEqList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																						 theRemoveDupFlag=TRUE, theVerboseFlag=FALSE, theRDataFile=NULL,
 																						 theListOnlyFlag=FALSE, theUseDeltaFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEqList))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((is.null(theRDataFile))||(is.character(theRDataFile)))
@@ -408,19 +408,19 @@ getDataObject_GeneSymbol_RnaSeq2 <- function(theGeneEqList, theGeneReportDir="/r
 		deltaFunction <- getDelta_RnaSeq2
 	}
 	getDataObj_internal(theGeneEqList=theGeneEqList, 
-											theGeneReportDir=theGeneReportDir,theDataDir=file.path(theGeneReportDir, "data"), 
+											theZipFile=theZipFile, 
 											theReadMatrixFunction='getDataMatrix_RnaSeq2', theRemoveDupFlag=theRemoveDupFlag, 
 											theProbeMetadataFunction=NULL, theGeneMetadataFunction=getMetadata_Gene_RnaSeq2, theHsaMimatMetadataFunction=NULL,
 											theVerboseFlag=theVerboseFlag, theRDataFile=theRDataFile, 
 											theListOnlyFlag=theListOnlyFlag, theDeltaFunction=deltaFunction)
 }
 
-getDataObject_GeneSymbol_Mutations <- function(theGeneEqList, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getDataObject_GeneSymbol_Mutations <- function(theGeneEqList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																							 theRemoveDupFlag=TRUE, theVerboseFlag=FALSE, theRDataFile=NULL,
 																							 theListOnlyFlag=FALSE, theUseDeltaFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEqList))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((is.null(theRDataFile))||(is.character(theRDataFile)))
@@ -432,19 +432,19 @@ getDataObject_GeneSymbol_Mutations <- function(theGeneEqList, theGeneReportDir="
 		deltaFunction <- getDelta_Mutations
 	}
 	getDataObj_internal(theGeneEqList, 
-											theGeneReportDir, file.path(theGeneReportDir, "data"), 
+											theZipFile, 
 											'getDataMatrix_Mutations', theRemoveDupFlag, 
 											NULL, getMetadata_Gene_Mutations, NULL,
 											theVerboseFlag, theRDataFile, theListOnlyFlag, deltaFunction)
 }
 
 
-getDataObject_GeneSymbol_RnaSeq <- function(theGeneEqList, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getDataObject_GeneSymbol_RnaSeq <- function(theGeneEqList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																						theRemoveDupFlag=TRUE, theVerboseFlag=FALSE, theRDataFile=NULL,
 																						theListOnlyFlag=FALSE, theUseDeltaFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEqList))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((is.null(theRDataFile))||(is.character(theRDataFile)))
@@ -456,18 +456,18 @@ getDataObject_GeneSymbol_RnaSeq <- function(theGeneEqList, theGeneReportDir="/rs
 		deltaFunction <- getDelta_RnaSeq
 	}
 	getDataObj_internal(theGeneEqList, 
-											theGeneReportDir, file.path(theGeneReportDir, "data"), 
+											theZipFile, 
 											'getDataMatrix_RnaSeq', theRemoveDupFlag, 
 											NULL, getMetadata_Gene_RnaSeq, NULL,
 											theVerboseFlag, theRDataFile, theListOnlyFlag, deltaFunction)
 }
 
-getDataObject_GeneSymbol_SNP6 <- function(theGeneEqList, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getDataObject_GeneSymbol_SNP6 <- function(theGeneEqList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																					theRemoveDupFlag=TRUE, theVerboseFlag=FALSE, theRDataFile=NULL,
 																					theListOnlyFlag=FALSE, theUseDeltaFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEqList))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((is.null(theRDataFile))||(is.character(theRDataFile)))
@@ -479,18 +479,18 @@ getDataObject_GeneSymbol_SNP6 <- function(theGeneEqList, theGeneReportDir="/rsrc
 		deltaFunction <- getDelta_SNP6
 	}
 	getDataObj_internal(theGeneEqList, 
-											theGeneReportDir, file.path(theGeneReportDir, "data"), 
+											theZipFile, 
 											'getDataMatrix_SNP6', theRemoveDupFlag, 
 											NULL, getMetadata_Gene_HG19, NULL,
 											theVerboseFlag, theRDataFile, theListOnlyFlag, deltaFunction)
 }
 
-getDataObject_Probe_Meth450 <- function(theGeneEqList, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getDataObject_Probe_Meth450 <- function(theGeneEqList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																				theRemoveDupFlag=TRUE, theVerboseFlag=FALSE, theRDataFile=NULL,
 																				theListOnlyFlag=FALSE, theUseDeltaFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEqList))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((is.null(theRDataFile))||(is.character(theRDataFile)))
@@ -502,18 +502,18 @@ getDataObject_Probe_Meth450 <- function(theGeneEqList, theGeneReportDir="/rsrch1
 		deltaFunction <- getDelta_Meth450
 	}
 	getDataObj_internal(theGeneEqList, 
-											theGeneReportDir, file.path(theGeneReportDir, "data"), 
+											theZipFile, 
 											'getDataMatrix_Meth450', theRemoveDupFlag, 
 											getMetadata_Probe_Meth450, NULL, NULL,
 											theVerboseFlag, theRDataFile, theListOnlyFlag, deltaFunction)
 }
 
-getDataObject_Probe_Meth27 <- function(theGeneEqList, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getDataObject_Probe_Meth27 <- function(theGeneEqList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																			 theRemoveDupFlag=TRUE, theVerboseFlag=FALSE, theRDataFile=NULL,
 																			 theListOnlyFlag=FALSE, theUseDeltaFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEqList))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((is.null(theRDataFile))||(is.character(theRDataFile)))
@@ -525,18 +525,18 @@ getDataObject_Probe_Meth27 <- function(theGeneEqList, theGeneReportDir="/rsrch1/
 		deltaFunction <- getDelta_Meth27
 	}
 	getDataObj_internal(theGeneEqList, 
-											theGeneReportDir, file.path(theGeneReportDir, "data"), 
+											theZipFile, 
 											'getDataMatrix_Meth27', theRemoveDupFlag,
 											getMetadata_Probe_Meth27, NULL, NULL,
 											theVerboseFlag, theRDataFile, theListOnlyFlag, deltaFunction)
 }
 
-getDataObject_CombinedHsaMimat_miRNASeq <- function(theGeneEqList, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getDataObject_CombinedHsaMimat_miRNASeq <- function(theGeneEqList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																										theRemoveDupFlag=TRUE, theVerboseFlag=FALSE, theRDataFile=NULL,
 																										theListOnlyFlag=FALSE, theUseDeltaFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEqList))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((is.null(theRDataFile))||(is.character(theRDataFile)))
@@ -548,7 +548,7 @@ getDataObject_CombinedHsaMimat_miRNASeq <- function(theGeneEqList, theGeneReport
 		deltaFunction <- getDelta_miRNASeq
 	}
 	getDataObj_internal(theGeneEqList, 
-											theGeneReportDir, file.path(theGeneReportDir, "data"), 
+											theZipFile, 
 											'getDataMatrix_miRNASeq', theRemoveDupFlag, 
 											NULL, NULL, TRUE,
 											theVerboseFlag, theRDataFile, theListOnlyFlag, deltaFunction)
@@ -558,12 +558,12 @@ getDataObject_CombinedHsaMimat_miRNASeq <- function(theGeneEqList, theGeneReport
 #### use gene symbol mapping
 ####
 
-getDataObject_GeneSymbol_Meth450 <- function(theGeneList, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getDataObject_GeneSymbol_Meth450 <- function(theGeneList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																						 theRemoveDupFlag=TRUE, theVerboseFlag=FALSE, theRDataFile=NULL,
 																						 theListOnlyFlag=FALSE, theUseDeltaFlag=FALSE)
 {
 	stopifnot(is.character(theGeneList))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((is.null(theRDataFile))||(is.character(theRDataFile)))
@@ -571,18 +571,18 @@ getDataObject_GeneSymbol_Meth450 <- function(theGeneList, theGeneReportDir="/rsr
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	probeList <- as.vector(unlist(lapply(theGeneList, function(theGene)
 	{
-		getNames_ProbeFromGeneSymbol_Meth450(theGene, file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		getNames_ProbeFromGeneSymbol_Meth450(theGene, theZipFile, theVerboseFlag=theVerboseFlag)
 	})))
 	names(probeList) <- theGeneList
-	getDataObject_Probe_Meth450(probeList, theGeneReportDir, theRemoveDupFlag, theVerboseFlag, theRDataFile, theListOnlyFlag, theUseDeltaFlag)
+	getDataObject_Probe_Meth450(probeList, theZipFile, theRemoveDupFlag, theVerboseFlag, theRDataFile, theListOnlyFlag, theUseDeltaFlag)
 }
 
-getDataObject_GeneSymbol_Meth27 <- function(theGeneList, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getDataObject_GeneSymbol_Meth27 <- function(theGeneList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																						theRemoveDupFlag=TRUE, theVerboseFlag=FALSE, theRDataFile=NULL,
 																						theListOnlyFlag=FALSE, theUseDeltaFlag=FALSE)
 {
 	stopifnot(is.character(theGeneList))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((is.null(theRDataFile))||(is.character(theRDataFile)))
@@ -590,10 +590,10 @@ getDataObject_GeneSymbol_Meth27 <- function(theGeneList, theGeneReportDir="/rsrc
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	probeList <- as.vector(unlist(lapply(theGeneList, function(theGene)
 	{
-		getNames_ProbeFromGeneSymbol_Meth27(theGene, file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		getNames_ProbeFromGeneSymbol_Meth27(theGene, theZipFile, theVerboseFlag=theVerboseFlag)
 	})))
 	names(probeList) <- theGeneList
-	getDataObject_Probe_Meth27(probeList, theGeneReportDir, theRemoveDupFlag, theVerboseFlag, theRDataFile, theListOnlyFlag, theUseDeltaFlag)
+	getDataObject_Probe_Meth27(probeList, theZipFile, theRemoveDupFlag, theVerboseFlag, theRDataFile, theListOnlyFlag, theUseDeltaFlag)
 }
 
 #################################################################

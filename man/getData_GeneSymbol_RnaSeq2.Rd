@@ -8,12 +8,12 @@ getData_GeneSymbol_RnaSeq2
 Retrieves a list of values for all samples/diseases for the given gene symbol.
 }
 \usage{
-getData_GeneSymbol_RnaSeq2(theGeneEq, theGeneReportDir = "/rsrch1/bcb/batcheffects/GENE_REPORT", theUseDeltaFlag = FALSE, theRemoveDupFlag = TRUE, theVerboseFlag = FALSE)
+getData_GeneSymbol_RnaSeq2(theGeneEq, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theUseDeltaFlag = FALSE, theRemoveDupFlag = TRUE, theVerboseFlag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{theGeneEq}{ A vector of gene symbol names as found in the getNames_ function for this data type. }
-  \item{theGeneReportDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT". }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". }
   \item{theUseDeltaFlag}{ Default: FALSE. A flag indicating to use the differences in value between tumor and normal samples. }
   \item{theRemoveDupFlag}{ Default: FALSE. Remove the duplicate barcodes from the same control samples used in different diseases. }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }

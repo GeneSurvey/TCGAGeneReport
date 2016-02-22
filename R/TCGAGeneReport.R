@@ -32,25 +32,26 @@ padChromosomeName <- function(theChr)
 	theChr
 }
 
-initGeneReport <- function(theLibDir="/rsrch1/bcb/batcheffects/GENE_REPORT/lib", theParameters="-Xms2400m")
+initGeneReport <- function(theParameters="-Xms2400m")
 {
-	stopifnot(isValidDirectoryPath(theLibDir))
 	stopifnot(is.character(theParameters))
-	message("TCGAGeneReport 2015-11-02-1400")
+	message("TCGAGeneReport 2015-12-28-1522")
 	message("note: parameters must be in terms of 'm' or .jinit will fail on Linux")
 	message("In testing, -Xmx42000m worked, while larger values caused core exceptions")
 	myJavaJars <- file.path(
-		file.path(theLibDir, "commons-codec-1.9.jar"),
-		file.path(theLibDir, "commons-compress-1.7.jar"),
-		file.path(theLibDir, "commons-io-2.4.jar"),
-		file.path(theLibDir, "commons-net-3.3.jar"),
-		file.path(theLibDir, "TcgaGSData.jar"),
-		file.path(theLibDir, "TcgaIdConverter.jar"),
+		system.file("TcgaGSData", "commons-codec-1.9.jar", package="TCGAGeneReport"),
+		system.file("TcgaGSData", "commons-compress-1.7.jar", package="TCGAGeneReport"),
+		system.file("TcgaGSData", "commons-io-2.4.jar", package="TCGAGeneReport"),
+		system.file("TcgaGSData", "commons-net-3.3.jar", package="TCGAGeneReport"),
+		system.file("TcgaGSData", "TcgaGSData.jar", package="TCGAGeneReport"),
+		system.file("TcgaGSData", "TcgaIdConverter.jar", package="TCGAGeneReport"),
 		fsep=.Platform$path.sep)
 	message("Calling .jinit theParameters=", theParameters)
 	message(myJavaJars)
 	.jinit(classpath=myJavaJars, force.init = TRUE, parameters=theParameters)
 	message("After .jinit")
+	cfr <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", "")
+	.jcall(cfr, returnSig = "S", method="printVersion")
 }
 
 verboseMessage <- function(..., theVerboseFlag=FALSE)
@@ -92,10 +93,11 @@ isValidDirectoryPath <- function(thePath)
 #################################################################
 #################################################################
 
-getDataVersion <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined")
+getDataVersion <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip")
 {
-	stopifnot(isValidDirectoryPath(theCombinedDir))
-	read.csv(file.path(theCombinedDir, "time.txt"), header=FALSE, stringsAsFactors=FALSE)[[1]]
+	stopifnot(file.exists(theZipFile))
+	zippedDataStream <- unz(theZipFile, "time.txt")
+	read.csv(zippedDataStream, header=FALSE, stringsAsFactors=FALSE)[[1]]
 }
 
 #################################################################
@@ -141,12 +143,12 @@ geneSymbolsMatchDataset <- function(theRequestVector, theGeneSymbolVector)
 	matches
 }
 
-getSynonyms <- function(theId, theIdDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/iddata/downloads", theVerboseFlag=FALSE)
+getSynonyms <- function(theId, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	verboseMessage("getSynonyms theId=", theId, theVerboseFlag=theVerboseFlag)
 	results <- NULL
-	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/GeneSynonyms", theIdDataDir)
+	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 	results <- .jcall(jReadGeneObj, returnSig = "[S", method="getList_GeneSymbol_Synonym", 
 										.jnew("java/lang/String",theId))
 	results

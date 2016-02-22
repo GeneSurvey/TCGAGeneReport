@@ -12,7 +12,7 @@
 #################################################################
 #################################################################
 
-plot_fromGene_internal <- function(theGene, theOutputDir, theGeneReportDir, 
+plot_fromGene_internal <- function(theGene, theOutputDir, theZipFile, 
 																	 theMapGeneToProbesFunction, theReadProbeFunction, theReadGeneFunction,
 																	 theDataType, theDataTypeLabel, theVerboseFlag, theUseDeltaFlag=FALSE,
 																	 theReplicateFlag=FALSE)
@@ -29,35 +29,35 @@ plot_fromGene_internal <- function(theGene, theOutputDir, theGeneReportDir,
 	{
 		verboseMessage("plot_fromGene_internal FALSE==theUseDeltaFlag", theVerboseFlag=theVerboseFlag)
 		myTag <- ""
-		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
-		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(theZipFile, theVerboseFlag=theVerboseFlag)
+		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	else
 	{
 		verboseMessage("plot_fromGene_internal TRUE==theUseDeltaFlag", theVerboseFlag=theVerboseFlag)
 		myTag <- "Delta"
-		myBarcodeDiseases <- getMetadataPop_PatientDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
-		myBarcodeSampleType <- getMetadataPop_PatientDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_PatientDisease(theZipFile, theVerboseFlag=theVerboseFlag)
+		myBarcodeSampleType <- getMetadataPop_PatientDisease(theZipFile, theVerboseFlag=theVerboseFlag)
 	}
-	probeList <- as.vector(unlist(theMapGeneToProbesFunction(theGene, file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)))
-	locations <- as.vector(unlist(lapply(probeList, function(theProbe, theDataDir, theVerboseFlag=theVerboseFlag)
+	probeList <- as.vector(unlist(theMapGeneToProbesFunction(theGene, theZipFile, theVerboseFlag=theVerboseFlag)))
+	locations <- as.vector(unlist(lapply(probeList, function(theProbe, theZipFile, theVerboseFlag=theVerboseFlag)
 	{
-		probeData <- as.vector(unlist(theReadProbeFunction(theProbe, theDataDir=theDataDir, theVerboseFlag=theVerboseFlag)))
+		probeData <- as.vector(unlist(theReadProbeFunction(theProbe, theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)))
 		# this is only one value, but you cannot unlist a list/vector of classes, I think
 		probeData[[1]]@mProbeLocation
-	},theDataDir=file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)))
+	},theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)))
 	probeList <- probeList[order(locations)]
 	maxLocationSize <- max(as.vector(unlist(lapply(locations, nchar))))
 	probeDataList <- lapply(probeList, function(theProbe, thePath, theVerboseFlag)
 	{
-		theReadGeneFunction(theProbe, theGeneReportDir, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
+		theReadGeneFunction(theProbe, theZipFile, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
 	}, thePath=myPathCombined, theVerboseFlag=theVerboseFlag)
 	# first write individual probe plots
 	for (index in 1:length(probeDataList))
 	{
 		myGeneData <- probeDataList[[index]]
 		probe <- probeList[index]
-		myProbeData <- as.vector(unlist(theReadProbeFunction(probe, theDataDir=file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)))
+		myProbeData <- as.vector(unlist(theReadProbeFunction(probe, theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)))
 		# this is only one value, but you cannot unlist a list/vector of classes, I think
 		myLocation <- myProbeData[[1]]@mProbeLocation
 		if(!is.na(as.numeric(myLocation)))
@@ -91,7 +91,7 @@ plot_fromGene_internal <- function(theGene, theOutputDir, theGeneReportDir,
 	# probeData[sample,probe]
 	returnFilename <- c(returnFilename,
 											plotHeatmapOutput(theGene, theOutputDir, probeData, myBarcodeDiseases, myBarcodeSampleType, 
-																				theDataType, theDataTypeLabel, file.path(theGeneReportDir,"data"), 
+																				theDataType, theDataTypeLabel, theZipFile, 
 																				theVerboseFlag, theReadProbeFunction, myTag))
 	returnFilename
 }
@@ -107,13 +107,13 @@ plot_fromGene_internal <- function(theGene, theOutputDir, theGeneReportDir,
 ####
 
 plot_GeneSymbol_Mutations <- function(theGeneEq, theOutputDir, 
-																		theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+																		theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																		theVerboseFlag=FALSE, theUseDeltaFlag=FALSE, theReplicateFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
 	stopifnot(1==length(theGeneEq))
 	stopifnot(isValidDirectoryPath(theOutputDir))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	stopifnot((TRUE==theReplicateFlag)||(FALSE==theReplicateFlag))
@@ -122,18 +122,18 @@ plot_GeneSymbol_Mutations <- function(theGeneEq, theOutputDir,
 	myBarcodeDiseases <- NULL
 	myBarcodeSampleType <- NULL
 	myTag <- ""
-	myGeneData <- getData_GeneSymbol_Mutations(theGeneEq, theGeneReportDir, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
+	myGeneData <- getData_GeneSymbol_Mutations(theGeneEq, theZipFile, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
 	if(TRUE==theUseDeltaFlag)
 	{
 		myTag <- "Delta"
-		myBarcodeDiseases <- getMetadataPop_PatientDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_PatientDisease(theZipFile, theVerboseFlag=theVerboseFlag)
 		myBarcodeSampleType <- myBarcodeDiseases
 		myBarcodeSampleType[myBarcodeSampleType] <- "Delta"
 	}
 	else
 	{
-		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
-		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(theZipFile, theVerboseFlag=theVerboseFlag)
+		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	plotGenericOutput(theGeneEq, theOutputDir, myGeneData, myBarcodeDiseases, 
 										myBarcodeSampleType, "Mutations", "Count", theVerboseFlag=theVerboseFlag, 
@@ -141,13 +141,13 @@ plot_GeneSymbol_Mutations <- function(theGeneEq, theOutputDir,
 }
 
 plot_GeneSymbol_RnaSeq2 <- function(theGeneEq, theOutputDir, 
-																		theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+																		theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 												 theVerboseFlag=FALSE, theUseDeltaFlag=FALSE, theReplicateFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
 	stopifnot(1==length(theGeneEq))
 	stopifnot(isValidDirectoryPath(theOutputDir))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	stopifnot((TRUE==theReplicateFlag)||(FALSE==theReplicateFlag))
@@ -156,31 +156,31 @@ plot_GeneSymbol_RnaSeq2 <- function(theGeneEq, theOutputDir,
 	myBarcodeDiseases <- NULL
 	myBarcodeSampleType <- NULL
 	myTag <- ""
-	myGeneData <- getData_GeneSymbol_RnaSeq2(theGeneEq, theGeneReportDir, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
+	myGeneData <- getData_GeneSymbol_RnaSeq2(theGeneEq, theZipFile, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
 	if(TRUE==theUseDeltaFlag)
 	{
 		myTag <- "Delta"
-		myBarcodeDiseases <- getMetadataPop_PatientDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_PatientDisease(theZipFile, theVerboseFlag=theVerboseFlag)
 		myBarcodeSampleType <- myBarcodeDiseases
 		myBarcodeSampleType[myBarcodeSampleType] <- "Delta"
 	}
 	else
 	{
-		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
-		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(theZipFile, theVerboseFlag=theVerboseFlag)
+		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	plotGenericOutput(theGeneEq, theOutputDir, myGeneData, myBarcodeDiseases, 
 										myBarcodeSampleType, "RNASeqV2", "Log Normalized Count", theVerboseFlag=theVerboseFlag, 
 										theTag=myTag, theGeneEqPre="", theReplicateFlag=theReplicateFlag)
 }
 
-plot_GeneSymbol_RnaSeq <- function(theGeneEq, theOutputDir, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+plot_GeneSymbol_RnaSeq <- function(theGeneEq, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 												 theVerboseFlag=FALSE, theUseDeltaFlag=FALSE, theReplicateFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
 	stopifnot(1==length(theGeneEq))
 	stopifnot(isValidDirectoryPath(theOutputDir))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	stopifnot((TRUE==theReplicateFlag)||(FALSE==theReplicateFlag))
@@ -189,31 +189,31 @@ plot_GeneSymbol_RnaSeq <- function(theGeneEq, theOutputDir, theGeneReportDir="/r
 	myBarcodeDiseases <- NULL
 	myBarcodeSampleType <- NULL
 	myTag <- ""
-	myGeneData <- getData_GeneSymbol_RnaSeq(theGeneEq, theGeneReportDir, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
+	myGeneData <- getData_GeneSymbol_RnaSeq(theGeneEq, theZipFile, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
 	if(TRUE==theUseDeltaFlag)
 	{
 		myTag <- "Delta"
-		myBarcodeDiseases <- getMetadataPop_PatientDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_PatientDisease(theZipFile, theVerboseFlag=theVerboseFlag)
 		myBarcodeSampleType <- myBarcodeDiseases
 		myBarcodeSampleType[myBarcodeSampleType] <- "Delta"
 	}
 	else
 	{
-		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
-		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(theZipFile, theVerboseFlag=theVerboseFlag)
+		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	plotGenericOutput(theGeneEq, theOutputDir, myGeneData, myBarcodeDiseases, 
 										myBarcodeSampleType, "RNASeq", "Log Normalized Count", theVerboseFlag=theVerboseFlag, 
 										theTag=myTag, theGeneEqPre="", theReplicateFlag=theReplicateFlag)
 }
 
-plot_GeneSymbol_SNP6 <- function(theGeneEq, theOutputDir, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+plot_GeneSymbol_SNP6 <- function(theGeneEq, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 											theVerboseFlag=FALSE, theUseDeltaFlag=FALSE, theReplicateFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
 	stopifnot(1==length(theGeneEq))
 	stopifnot(isValidDirectoryPath(theOutputDir))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	stopifnot((TRUE==theReplicateFlag)||(FALSE==theReplicateFlag))
@@ -222,52 +222,52 @@ plot_GeneSymbol_SNP6 <- function(theGeneEq, theOutputDir, theGeneReportDir="/rsr
 	myBarcodeDiseases <- NULL
 	myBarcodeSampleType <- NULL
 	myTag <- ""
-	myGeneData <- getData_GeneSymbol_SNP6(theGeneEq, theGeneReportDir, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
+	myGeneData <- getData_GeneSymbol_SNP6(theGeneEq, theZipFile, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
 	if(TRUE==theUseDeltaFlag)
 	{
 		myTag <- "Delta"
-		myBarcodeDiseases <- getMetadataPop_PatientDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_PatientDisease(theZipFile, theVerboseFlag=theVerboseFlag)
 		myBarcodeSampleType <- myBarcodeDiseases
 		myBarcodeSampleType[myBarcodeSampleType] <- "Delta"
 	}
 	else
 	{
-		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
-		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(theZipFile, theVerboseFlag=theVerboseFlag)
+		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	plotGenericOutput(theGeneEq, theOutputDir, myGeneData, myBarcodeDiseases, 
 										myBarcodeSampleType, "SNP6", "Log Normalized Copy Number", theVerboseFlag=theVerboseFlag, 
 										theTag=myTag, theGeneEqPre="", theReplicateFlag=theReplicateFlag)
 }
 
-plot_Probe_Meth450 <- function(theGeneEq, theOutputDir, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+plot_Probe_Meth450 <- function(theGeneEq, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 												 theVerboseFlag=FALSE, theUseDeltaFlag=FALSE, theReplicateFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
 	stopifnot(1==length(theGeneEq))
 	stopifnot(isValidDirectoryPath(theOutputDir))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	stopifnot((TRUE==theReplicateFlag)||(FALSE==theReplicateFlag))
 	# read gene data
-	myProbe <- getMetadata_Probe_Meth450(theGeneEq, file.path(theGeneReportDir,"data"))
+	myProbe <- getMetadata_Probe_Meth450(theGeneEq, theZipFile)
 	myGeneData <- NULL
 	myBarcodeDiseases <- NULL
 	myBarcodeSampleType <- NULL
 	myTag <- ""
-	myGeneData <- getData_Probe_Meth450(theGeneEq, theGeneReportDir, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
+	myGeneData <- getData_Probe_Meth450(theGeneEq, theZipFile, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
 	if(TRUE==theUseDeltaFlag)
 	{
 		myTag <- "Delta"
-		myBarcodeDiseases <- getMetadataPop_PatientDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_PatientDisease(theZipFile, theVerboseFlag=theVerboseFlag)
 		myBarcodeSampleType <- myBarcodeDiseases
 		myBarcodeSampleType[myBarcodeSampleType] <- "Delta"
 	}
 	else
 	{
-		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
-		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(theZipFile, theVerboseFlag=theVerboseFlag)
+		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	geneEqPre <- paste(padChromosomeName(myProbe[[1]]@mChromosome), "-", myProbe[[1]]@mProbeLocation, "-", sep="")
 	plotGenericOutput(theGeneEq, theOutputDir, myGeneData, myBarcodeDiseases, 
@@ -275,35 +275,35 @@ plot_Probe_Meth450 <- function(theGeneEq, theOutputDir, theGeneReportDir="/rsrch
 										theTag=myTag, theGeneEqPre=geneEqPre, theReplicateFlag=theReplicateFlag)
 }
 
-plot_Probe_Meth27 <- function(theGeneEq, theOutputDir, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+plot_Probe_Meth27 <- function(theGeneEq, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 												theVerboseFlag=FALSE, theUseDeltaFlag=FALSE, theReplicateFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
 	stopifnot(1==length(theGeneEq))
 	stopifnot(isValidDirectoryPath(theOutputDir))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	stopifnot((TRUE==theReplicateFlag)||(FALSE==theReplicateFlag))
 	# read gene data
-	myProbe <- getMetadata_Probe_Meth27(theGeneEq, file.path(theGeneReportDir,"data"))
+	myProbe <- getMetadata_Probe_Meth27(theGeneEq, theZipFile)
 	stopifnot(FALSE==is.null(myProbe[[1]]))
 	myGeneData <- NULL
 	myBarcodeDiseases <- NULL
 	myBarcodeSampleType <- NULL
 	myTag <- ""
-	myGeneData <- getData_Probe_Meth27(theGeneEq, theGeneReportDir, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
+	myGeneData <- getData_Probe_Meth27(theGeneEq, theZipFile, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
 	if(TRUE==theUseDeltaFlag)
 	{
 		myTag <- "Delta"
-		myBarcodeDiseases <- getMetadataPop_PatientDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_PatientDisease(theZipFile, theVerboseFlag=theVerboseFlag)
 		myBarcodeSampleType <- myBarcodeDiseases
 		myBarcodeSampleType[myBarcodeSampleType] <- "Delta"
 	}
 	else
 	{
-		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
-		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(theZipFile, theVerboseFlag=theVerboseFlag)
+		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	geneEqPre <- paste(padChromosomeName(myProbe[[1]]@mChromosome), "-", myProbe[[1]]@mProbeLocation, "-", sep="")
 	plotGenericOutput(theGeneEq, theOutputDir, myGeneData, myBarcodeDiseases, 
@@ -311,13 +311,13 @@ plot_Probe_Meth27 <- function(theGeneEq, theOutputDir, theGeneReportDir="/rsrch1
 										theTag=myTag, theGeneEqPre=geneEqPre, theReplicateFlag=theReplicateFlag)
 }
 
-plot_CombinedHsaMimat_miRNASeq <- function(theGeneEq, theOutputDir, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+plot_CombinedHsaMimat_miRNASeq <- function(theGeneEq, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 													theVerboseFlag=FALSE, theUseDeltaFlag=FALSE, theReplicateFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
 	stopifnot(1==length(theGeneEq))
 	stopifnot(isValidDirectoryPath(theOutputDir))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	stopifnot((TRUE==theReplicateFlag)||(FALSE==theReplicateFlag))
@@ -326,18 +326,18 @@ plot_CombinedHsaMimat_miRNASeq <- function(theGeneEq, theOutputDir, theGeneRepor
 	myBarcodeDiseases <- NULL
 	myBarcodeSampleType <- NULL
 	myTag <- ""
-	myGeneData <- getData_CombinedHsaMimat_miRNASeq(theGeneEq, theGeneReportDir, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
+	myGeneData <- getData_CombinedHsaMimat_miRNASeq(theGeneEq, theZipFile, theVerboseFlag=theVerboseFlag, theUseDeltaFlag=theUseDeltaFlag)
 	if(TRUE==theUseDeltaFlag)
 	{
 		myTag <- "Delta"
-		myBarcodeDiseases <- getMetadataPop_PatientDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_PatientDisease(theZipFile, theVerboseFlag=theVerboseFlag)
 		myBarcodeSampleType <- myBarcodeDiseases
 		myBarcodeSampleType[myBarcodeSampleType] <- "Delta"
 	}
 	else
 	{
-		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
-		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir,"data"), theVerboseFlag=theVerboseFlag)
+		myBarcodeDiseases <- getMetadataPop_BarcodeDisease(theZipFile, theVerboseFlag=theVerboseFlag)
+		myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	plotGenericOutput(theGeneEq, theOutputDir, myGeneData, myBarcodeDiseases, 
 										myBarcodeSampleType, "miRNASeq", "isoform", theVerboseFlag=theVerboseFlag,
@@ -349,17 +349,17 @@ plot_CombinedHsaMimat_miRNASeq <- function(theGeneEq, theOutputDir, theGeneRepor
 ####
 
 
-plot_GeneSymbol_Meth450 <- function(theGene, theOutputDir, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+plot_GeneSymbol_Meth450 <- function(theGene, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																		theVerboseFlag=FALSE, theUseDeltaFlag=FALSE, theReplicateFlag=FALSE)
 {
 	stopifnot(is.character(theGene))
 	stopifnot(1==length(theGene))
 	stopifnot(isValidDirectoryPath(theOutputDir))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	stopifnot((TRUE==theReplicateFlag)||(FALSE==theReplicateFlag))
-	plot_fromGene_internal(theGene, theOutputDir, theGeneReportDir, 
+	plot_fromGene_internal(theGene, theOutputDir, theZipFile, 
 												 theMapGeneToProbesFunction=getNames_ProbeFromGeneSymbol_Meth450, 
 												 theReadProbeFunction=getMetadata_Probe_Meth450, 
 												 theReadGeneFunction=getData_Probe_Meth450,
@@ -370,17 +370,17 @@ plot_GeneSymbol_Meth450 <- function(theGene, theOutputDir, theGeneReportDir="/rs
 												 theReplicateFlag=theReplicateFlag)
 }
 
-plot_GeneSymbol_Meth27 <- function(theGene, theOutputDir, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+plot_GeneSymbol_Meth27 <- function(theGene, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																 theVerboseFlag=FALSE, theUseDeltaFlag=FALSE, theReplicateFlag=FALSE)
 {
 	stopifnot(is.character(theGene))
 	stopifnot(1==length(theGene))
 	stopifnot(isValidDirectoryPath(theOutputDir))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	stopifnot((TRUE==theReplicateFlag)||(FALSE==theReplicateFlag))
-	plot_fromGene_internal(theGene, theOutputDir, theGeneReportDir, 
+	plot_fromGene_internal(theGene, theOutputDir, theZipFile, 
 												 theMapGeneToProbesFunction=getNames_ProbeFromGeneSymbol_Meth27, 
 												 theReadProbeFunction=getMetadata_Probe_Meth27, 
 												 theReadGeneFunction=getData_Probe_Meth27,

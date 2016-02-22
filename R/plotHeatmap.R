@@ -12,7 +12,7 @@
 #################################################################
 
 plotHeatmapOutput <- function(theGene, theOutputDir, theProbeData, theBarcodeDiseases, theBarcodeSampleType,
-															theDataType, theDataTypeLabel, theDataDir, theVerboseFlag, theReadProbeFunction, 
+															theDataType, theDataTypeLabel, theZipFile, theVerboseFlag, theReadProbeFunction, 
 															theTag="")
 {
 	stopifnot(length(theProbeData)>0)	
@@ -60,21 +60,21 @@ plotHeatmapOutput <- function(theGene, theOutputDir, theProbeData, theBarcodeDis
 	rownames(plotData) <- diseaseLabels
 	CairoPNG(filename=filename, width = 2400, height = 2400, pointsize=36)
 	on.exit(dev.off(), add = TRUE)
-	locations <- unlist(lapply(colnames(plotData), function(theProbe, theDataDir, theVerboseFlag)
+	locations <- unlist(lapply(colnames(plotData), function(theProbe, theZipFile, theVerboseFlag)
 	{
-		probeData <- theReadProbeFunction(theProbe, theDataDir=theDataDir)
+		probeData <- theReadProbeFunction(theProbe, theZipFile=theZipFile)
 		# stuck as a list :-(
 		paste(theProbe, " @ ", probeData[[1]]@mProbeLocation, sep="")
-	},theDataDir=theDataDir,theVerboseFlag=theVerboseFlag))
-	locOnly <- unlist(lapply(colnames(plotData), function(theProbe, theDataDir, theVerboseFlag)
+	},theZipFile=theZipFile,theVerboseFlag=theVerboseFlag))
+	locOnly <- unlist(lapply(colnames(plotData), function(theProbe, theZipFile, theVerboseFlag)
 	{
-		probeData <- theReadProbeFunction(theProbe, theDataDir=theDataDir)
+		probeData <- theReadProbeFunction(theProbe, theZipFile=theZipFile)
 		# stuck as a list :-(
 		probeData[[1]]@mProbeLocation
-	},theDataDir=theDataDir,theVerboseFlag=theVerboseFlag))
+	},theZipFile=theZipFile,theVerboseFlag=theVerboseFlag))
 	colnames(plotData) <- locations
 	plotData <- plotData[,order(locOnly), drop=FALSE]
-	if (length(locOnly)>1)
+	if ((length(locOnly)>1) && (length(as.vector(plotData))!=(sum(is.nan(as.vector(plotData))))))
 	{
 		heatmap.2(plotData, Rowv=NULL, Colv=NULL, dendrogram="none", main=mainText, 
 							sepcolor="black", rowsep=myrowsep, trace="none",

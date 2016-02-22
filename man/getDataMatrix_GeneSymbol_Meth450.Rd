@@ -8,12 +8,12 @@ getDataMatrix_GeneSymbol_Meth450
 Retrieves a matrix of values for all probes mapped to by the given gene symbol, with values for all samples/diseases.
 }
 \usage{
-getDataMatrix_GeneSymbol_Meth450(theGene, theGeneReportDir = "/rsrch1/bcb/batcheffects/GENE_REPORT", theRemoveDupFlag = TRUE, theVerboseFlag = FALSE, theUseDeltaFlag=FALSE)
+getDataMatrix_GeneSymbol_Meth450(theGene, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theRemoveDupFlag = TRUE, theVerboseFlag = FALSE, theUseDeltaFlag=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{theGene}{ A vector of gene symbol names as found in the getNames_ function for this data type. }
-  \item{theGeneReportDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT". }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". }
   \item{theRemoveDupFlag}{ Default: FALSE. Remove the duplicate barcodes from the same control samples used in different diseases. }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
   \item{theUseDeltaFlag}{ Default: FALSE. A flag indicating to use the differences in value between tumor and normal samples. }

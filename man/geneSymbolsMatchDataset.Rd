@@ -37,9 +37,9 @@ FALSE otherwise.
 }
 \examples{
 #	message("**** test geneSymbolsMatchDataset")
-#	print(geneSymbolsMatchDataset(c("ZWINT|11130", "TP53"), getNames_GeneSymbol_RnaSeq2(theCombinedDir=combinedDir)))
+#	print(geneSymbolsMatchDataset(c("ZWINT|11130", "TP53"), getNames_GeneSymbol_RnaSeq2(theZipFile=combinedDir)))
 #	message("**** test geneSymbolsMatchDataset")
-#	print(geneSymbolsMatchDataset(c("TP53", "foo"), getNames_GeneSymbol_RnaSeq2(theCombinedDir=combinedDir)))
+#	print(geneSymbolsMatchDataset(c("TP53", "foo"), getNames_GeneSymbol_RnaSeq2(theZipFile=combinedDir)))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

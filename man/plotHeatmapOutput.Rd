@@ -6,7 +6,7 @@
 Plot heatmap for methylation probes.
 }
 \usage{
-plotHeatmapOutput(theGene, theOutputDir, theProbeData, theBarcodeDiseases, theBarcodeSampleType, theDataType, theDataTypeLabel, theDataDir, theVerboseFlag, theReadProbeFunction, theTag = "")
+plotHeatmapOutput(theGene, theOutputDir, theProbeData, theBarcodeDiseases, theBarcodeSampleType, theDataType, theDataTypeLabel, theZipFile, theVerboseFlag, theReadProbeFunction, theTag = "")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,7 +17,7 @@ plotHeatmapOutput(theGene, theOutputDir, theProbeData, theBarcodeDiseases, theBa
   \item{theBarcodeSampleType}{Data in the format from the getMetadataPop_BarcodeSamplecode or getMetadataPop_PatientDisease. This is a vector of string values (diseases) with the patient ids or barcodes as the names(). Regular data uses barcodes, delta data uses patient ids.}
   \item{theDataType}{The data type is a string for the platform that is used in the title and file name.}
   \item{theDataTypeLabel}{A string label for the Y axis, describing the data type being plotted.}
-  \item{theDataDir}{ No default. For DQS Servers, use "/rsrch1/bcb/batcheffects/GENE_REPORT/data".}
+  \item{theZipFile}{ No default. For DQS Servers, use "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip".}
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
   \item{theReadProbeFunction}{Function to get data about a probe -- getData_Probe_Meth450 or getData_Probe_Meth27 }
   \item{theTag}{An optional tag used to form the last part of the title and file name. This might be a good place to describe your data tweaks. Use "" to skip use.}

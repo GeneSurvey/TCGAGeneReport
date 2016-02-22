@@ -8,13 +8,13 @@ plot_GeneSymbol_Mutations
 Plots stripcharts and replicate diagrams for the given arguments.
 }
 \usage{
-plot_GeneSymbol_Mutations(theGeneEq, theOutputDir, theGeneReportDir = "/rsrch1/bcb/batcheffects/GENE_REPORT", theVerboseFlag = FALSE, theUseDeltaFlag = FALSE, theReplicateFlag = FALSE)
+plot_GeneSymbol_Mutations(theGeneEq, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag = FALSE, theUseDeltaFlag = FALSE, theReplicateFlag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{theGeneEq}{ The gene symbol to plot which corresponds to an id from the appropriate getNames_ function. }
   \item{theOutputDir}{ Directory to which to write files. Directory will be created if needed/possible. }
-  \item{theGeneReportDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT". }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
   \item{theUseDeltaFlag}{ Default: FALSE. A flag indicating to use the differences in value between tumor and normal samples. }
   \item{theReplicateFlag}{ Default: FALSE. A flag indicating to write the replicate plots. }

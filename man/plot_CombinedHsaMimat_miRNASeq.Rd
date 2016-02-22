@@ -8,13 +8,13 @@ plot_CombinedHsaMimat_miRNASeq
 Plots stripcharts and replicate diagrams for the given arguments.
 }
 \usage{
-plot_CombinedHsaMimat_miRNASeq(theGeneEq, theOutputDir, theGeneReportDir = "/rsrch1/bcb/batcheffects/GENE_REPORT", theVerboseFlag = FALSE, theUseDeltaFlag = FALSE, theReplicateFlag=FALSE)
+plot_CombinedHsaMimat_miRNASeq(theGeneEq, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag = FALSE, theUseDeltaFlag = FALSE, theReplicateFlag=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{theGeneEq}{ The combined HSA/MIMAT id to plot which corresponds to an id from the appropriate getNames_ function. }
   \item{theOutputDir}{ Directory to which to write files. Directory will be created if needed/possible. }
-  \item{theGeneReportDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT". }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
   \item{theUseDeltaFlag}{ Default: FALSE. A flag indicating to use the differences in value between tumor and normal samples. }
   \item{theReplicateFlag}{ Default: FALSE. A flag indicating to write the replicate plots. }
@@ -46,7 +46,7 @@ A list of files output.
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (theGeneEq, theOutputDir, theGeneReportDir = "/rsrch1/bcb/batcheffects/GENE_REPORT", 
+function (theGeneEq, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
     theVerboseFlag = FALSE, theUseDeltaFlag = FALSE) 
 {
     myGeneData <- NULL
@@ -57,10 +57,10 @@ function (theGeneEq, theOutputDir, theGeneReportDir = "/rsrch1/bcb/batcheffects/
         myTag <- "Delta"
     }
     myGeneData <- getData_CombinedHsaMimat_miRNASeq(theGeneEq, 
-        theGeneReportDir, theVerboseFlag = theVerboseFlag, theUseDeltaFlag = theUseDeltaFlag)
-    myBarcodeDiseases <- getMetadataPop_BarcodeDisease(file.path(theGeneReportDir, 
+        theZipFile, theVerboseFlag = theVerboseFlag, theUseDeltaFlag = theUseDeltaFlag)
+    myBarcodeDiseases <- getMetadataPop_BarcodeDisease(file.path(theZipFile, 
         "data"), theVerboseFlag = theVerboseFlag)
-    myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir, 
+    myBarcodeSampleType <- getMetadataPop_BarcodeSamplecode(file.path(theZipFile, 
         "data"), theVerboseFlag = theVerboseFlag)
     plotGenericOutput(theGeneEq, theOutputDir, myGeneData, myBarcodeDiseases, 
         myBarcodeSampleType, "miRNASeq", "isoform", theVerboseFlag = theVerboseFlag, 

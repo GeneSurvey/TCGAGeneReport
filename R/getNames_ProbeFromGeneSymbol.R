@@ -12,13 +12,13 @@
 #################################################################
 #################################################################
 
-getNames_ProbeFromGeneSymbol_internal <- function(theGene, theDataDir, theMethodString, theVerboseFlag)
+getNames_ProbeFromGeneSymbol_internal <- function(theGene, theZipFile, theMethodString, theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	listResults <- lapply(theGene, function(myGene)
 	{
 		results <- NULL
-		jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/GetMapGeneEq", theDataDir)
+		jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 		result <- .jcall(jReadGeneObj, returnSig = "[S", method=theMethodString, 
 										 .jnew("java/lang/String",myGene))
 		if(is.jnull(result))
@@ -41,16 +41,16 @@ getNames_ProbeFromGeneSymbol_internal <- function(theGene, theDataDir, theMethod
 #################################################################
 #################################################################
 
-getNames_ProbeFromGeneSymbol_Meth450 <- function(theGene, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data",
+getNames_ProbeFromGeneSymbol_Meth450 <- function(theGene, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																		theVerboseFlag=FALSE)
 {
-	getNames_ProbeFromGeneSymbol_internal(theGene, theDataDir, 'getMapping_Meth450', theVerboseFlag=theVerboseFlag)
+	getNames_ProbeFromGeneSymbol_internal(theGene, theZipFile, 'getMapping_Meth450', theVerboseFlag=theVerboseFlag)
 }
 
-getNames_ProbeFromGeneSymbol_Meth27 <- function(theGene, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data",
+getNames_ProbeFromGeneSymbol_Meth27 <- function(theGene, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																	 theVerboseFlag=FALSE)
 {
-	getNames_ProbeFromGeneSymbol_internal(theGene, theDataDir, 'getMapping_Meth27', theVerboseFlag=theVerboseFlag)
+	getNames_ProbeFromGeneSymbol_internal(theGene, theZipFile, 'getMapping_Meth27', theVerboseFlag=theVerboseFlag)
 }
 
 #################################################################

@@ -3,10 +3,10 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{plotAssays}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Plot data from different assays against each other
 }
 \usage{
-plotAssays(theGene1, theGene2, theAssay1, theAssay2, theOutputDir, theGeneReportDir = "/rsrch1/bcb/batcheffects/GENE_REPORT", theUseDeltaFlag = FALSE, theRemoveDupFlag = TRUE, theVerboseFlag = FALSE)
+plotAssays(theGene1, theGene2, theAssay1, theAssay2, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theUseDeltaFlag = FALSE, theRemoveDupFlag = TRUE, theVerboseFlag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,7 +15,7 @@ plotAssays(theGene1, theGene2, theAssay1, theAssay2, theOutputDir, theGeneReport
   \item{theAssay1}{Platform/assay for first axis. A string, one of Mutations, RnaSeq2, RnaSeq, SNP6, Meth450, Meth27, miRNASeq. }
   \item{theAssay2}{Platform/assay for first axis. A string, one of Mutations, RnaSeq2, RnaSeq, SNP6, Meth450, Meth27, miRNASeq. }
   \item{theOutputDir}{Directory in which to create the output}
-  \item{theGeneReportDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT". }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". }
   \item{theUseDeltaFlag}{ Default: FALSE. A flag indicating to use the differences in value between tumor and normal samples. }
   \item{theRemoveDupFlag}{ Default: FALSE. Remove the duplicate barcodes from the same control samples used in different diseases. }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }

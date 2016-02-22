@@ -12,13 +12,13 @@
 #################################################################
 #################################################################
 
-getMetadataTcga_Name_internal <- function(theId, theDataDir, theMethodString, theVerboseFlag)
+getMetadataTcga_Name_internal <- function(theId, theZipFile, theMethodString, theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	verboseMessage("getMetadataTcga_Name_internal theId=", theId, theVerboseFlag=theVerboseFlag)
 	verboseMessage("getMetadataTcga_Name_internal theMethodString=", theMethodString, theVerboseFlag=theVerboseFlag)
 	results <- NULL
-	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/MetadataTcgaNames", theDataDir)
+	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 	results <- .jcall(jReadGeneObj, returnSig = "Ljava/lang/String;", method=theMethodString, 
 											.jnew("java/lang/String",theId))
 	results
@@ -30,19 +30,19 @@ getMetadataTcga_Name_internal <- function(theId, theDataDir, theMethodString, th
 #################################################################
 #################################################################
 
-getMetadataTcga_Name_Dataset <- function(theId, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadataTcga_Name_Dataset <- function(theId, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getMetadataTcga_Name_internal(theId, theDataDir, 'getMetadataTcga_DatasetName', theVerboseFlag=theVerboseFlag)
+	getMetadataTcga_Name_internal(theId, theZipFile, 'getMetadataTcga_DatasetName', theVerboseFlag=theVerboseFlag)
 }
 
-getMetadataTcga_Name_Disease <- function(theId, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadataTcga_Name_Disease <- function(theId, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getMetadataTcga_Name_internal(theId, theDataDir, 'getMetadataTcga_DiseaseName', theVerboseFlag=theVerboseFlag)
+	getMetadataTcga_Name_internal(theId, theZipFile, 'getMetadataTcga_DiseaseName', theVerboseFlag=theVerboseFlag)
 }
 
-getMetadataTcga_Name_SampleType <- function(theId, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadataTcga_Name_SampleType <- function(theId, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getMetadataTcga_Name_internal(theId, theDataDir, 'getMetadataTcga_SampleTypeName', theVerboseFlag=theVerboseFlag)
+	getMetadataTcga_Name_internal(theId, theZipFile, 'getMetadataTcga_SampleTypeName', theVerboseFlag=theVerboseFlag)
 }
 
 #################################################################

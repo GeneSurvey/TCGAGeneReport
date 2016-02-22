@@ -84,66 +84,66 @@ getDataDelta_internal <- function(data, barcodeSampleTypes, theNormalList, theTu
 #################################################################
 #################################################################
 
-getDelta_RnaSeq2 <- function(theData, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT",
+getDelta_RnaSeq2 <- function(theData, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip",
 														 theTumorList = c("01", "03", "05", "06", "09"),
 														 theNormalList = c("10", "11", "12", "13", "14"), 
 														 theVerboseFlag=FALSE)
 {
-	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	getDataDelta_internal(theData, barcodeSampleTypes, theNormalList, theTumorList)
 }
 
-getDelta_RnaSeq <- function(theData, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT",
+getDelta_RnaSeq <- function(theData, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip",
 														 theTumorList = c("01", "03", "05", "06", "09"),
 														 theNormalList = c("10", "11", "12", "13", "14"), 
 														 theVerboseFlag=FALSE)
 {
-	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	getDataDelta_internal(theData, barcodeSampleTypes, theNormalList, theTumorList)
 }
 
-getDelta_Mutations <- function(theData, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT",
+getDelta_Mutations <- function(theData, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip",
 															 theTumorList = c("01", "03", "05", "06", "09"),
 															 theNormalList = c("10", "11", "12", "13", "14"), 
 															 theVerboseFlag=FALSE)
 {
-	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	getDataDelta_internal(theData, barcodeSampleTypes, theNormalList, theTumorList)
 }
 
-getDelta_SNP6 <- function(theData, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT",
+getDelta_SNP6 <- function(theData, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip",
 													theTumorList = c("01", "03", "05", "06", "09"),
 													theNormalList = c("10", "11", "12", "13", "14"), 
 													theVerboseFlag=FALSE)
 {
-	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	getDataDelta_internal(theData, barcodeSampleTypes, theNormalList, theTumorList)
 }
 
-getDelta_Meth450 <- function(theData, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT",
+getDelta_Meth450 <- function(theData, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip",
 														 theTumorList = c("01", "03", "05", "06", "09"),
 														 theNormalList = c("10", "11", "12", "13", "14"), 
 														 theVerboseFlag=FALSE)
 {
-	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	getDataDelta_internal(theData, barcodeSampleTypes, theNormalList, theTumorList)
 }
 
-getDelta_Meth27 <- function(theData, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT",
+getDelta_Meth27 <- function(theData, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip",
 														theTumorList = c("01", "03", "05", "06", "09"),
 														theNormalList = c("10", "11", "12", "13", "14"), 
 														theVerboseFlag=FALSE)
 {
-	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	getDataDelta_internal(theData, barcodeSampleTypes, theNormalList, theTumorList)
 }
 
-getDelta_miRNASeq <- function(theData, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT",
+getDelta_miRNASeq <- function(theData, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip",
 															theTumorList = c("01", "03", "05", "06", "09"),
 															theNormalList = c("10", "11", "12", "13", "14"), 
 															theVerboseFlag=FALSE)
 {
-	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+	barcodeSampleTypes <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	getDataDelta_internal(theData, barcodeSampleTypes, theNormalList, theTumorList)
 }
 

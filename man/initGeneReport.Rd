@@ -11,11 +11,10 @@ override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/lib". Note, the pa
 directory under GENE_REPORT. This is where the Java JAR files are kept.
 }
 \usage{
-initGeneReport(theLibDir = "/rsrch1/bcb/batcheffects/GENE_REPORT/lib", theParameters = "-Xms2400m")
+initGeneReport(theParameters = "-Xms2400m")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{theLibDir}{ If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/lib". Note, the path is to the lib directory under GENE_REPORT. This is where the Java JAR files are kept. } 
   \item{theParameters}{ Parameters to Java. This allows you to adjust the arguments to the rJava Java VM. As noted when called, on our servers, using measurements other than m or larger than 42000 would fail. The HPC would take larger values of m. }
 }
 \details{

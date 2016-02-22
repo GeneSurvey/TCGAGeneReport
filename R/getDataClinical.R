@@ -12,17 +12,18 @@
 #################################################################
 #################################################################
 
-getDataClinical_internal <- function(theCombinedDir, theVerboseFlag)
+getDataClinical_internal <- function(theZipFile, theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	results <- NULL
-	jObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/GetDataClinical", theCombinedDir)
-	result <- .jcall(jObj, returnSig = "Z", method="getDataClinical")
-	if(TRUE==result)
+	jObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
+	result <- .jcall(jObj, returnSig = "Lorg/mda/bcb/tcgagsdata/retrieve/GetDataClinical;", 
+									 method="getDataClinical")
+	if(FALSE==is.jnull(result))
 	{
-		results <- matrixWithIssues(jObj$mGenesBySamplesValues, ncol=length(jObj$mColumnLabels))
-		rownames(results) <- jObj$mPatientIds
-		colnames(results) <- jObj$mColumnLabels
+		results <- matrixWithIssues(result$mGenesBySamplesValues, ncol=length(result$mColumnLabels))
+		rownames(results) <- result$mPatientIds
+		colnames(results) <- result$mColumnLabels
 	}
 	results
 }
@@ -33,11 +34,11 @@ getDataClinical_internal <- function(theCombinedDir, theVerboseFlag)
 #################################################################
 #################################################################
 
-getDataClinical <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getDataClinical <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theCombinedDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataClinical_internal(theCombinedDir, theVerboseFlag=theVerboseFlag)
+	getDataClinical_internal(theZipFile, theVerboseFlag=theVerboseFlag)
 }
 
 #################################################################

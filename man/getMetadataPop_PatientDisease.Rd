@@ -8,11 +8,11 @@ getMetadataPop_PatientDisease
 A list of diseases types for all TCGA patient ids.
 }
 \usage{
-getMetadataPop_PatientDisease(theDataDir = "/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag = FALSE)
+getMetadataPop_PatientDisease(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{theDataDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/data". NOTE: this is a subdirectory of GENE_REPORT. }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". NOTE: this is a subdirectory of GENE_REPORT. }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
 }
 \details{

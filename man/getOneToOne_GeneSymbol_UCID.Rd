@@ -4,12 +4,12 @@
 \title{getOneToOne_GeneSymbol_UCID}
 \description{Given one or more UCSC ids, give the list of corresponding gene symbols}
 \usage{
-getOneToOne_GeneSymbol_UCID(theUCIDId, theIdDataDir = "/rsrch1/bcb/batcheffects/GENE_REPORT/iddata/downloads", theVerboseFlag = FALSE)
+getOneToOne_GeneSymbol_UCID(theUCIDId, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{theUCIDId}{One or a vector of UCSC ids from the getOneToOne_UCSC_List. Note: these values may not correspond to values in provided data. }
-  \item{theIdDataDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/iddata/downloads". NOTE: this is a subdirectory of GENE_REPORT. }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". NOTE: this is a subdirectory of GENE_REPORT. }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
 }
 \details{
@@ -40,10 +40,10 @@ A vector of values with the original request vector as names().
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (theUCIDId, theIdDataDir = "/rsrch1/bcb/batcheffects/GENE_REPORT/iddata/downloads", 
+function (theUCIDId, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
     theVerboseFlag = FALSE) 
 {
-    getOneToOne_Name_internal(theUCIDId, theIdDataDir, "getOneToOne_GeneSymbol_UCID", 
+    getOneToOne_Name_internal(theUCIDId, theZipFile, "getOneToOne_GeneSymbol_UCID", 
         theVerboseFlag = theVerboseFlag)
   }
 }

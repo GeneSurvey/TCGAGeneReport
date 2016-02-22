@@ -12,20 +12,20 @@
 #################################################################
 #################################################################
 
-getMirs_List_internal <- function(theDataDir, theMethodString, theVerboseFlag)
+getMirs_List_internal <- function(theZipFile, theMethodString, theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	results <- NULL
-	jListGenesObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/MetadataMir", theDataDir)
+	jListGenesObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 	results <- .jcall(jListGenesObj, returnSig = "[S", method=theMethodString)
 	results
 }
 
-getMirs_Metadata_internal <- function(theId, theDataDir, theMethodString, theVerboseFlag)
+getMirs_Metadata_internal <- function(theId, theZipFile, theMethodString, theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	result <- NULL
-	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/MetadataMir", theDataDir)
+	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 	jObj <- .jcall(jReadGeneObj, 
 								 returnSig = "[Lorg/mda/bcb/tcgagsdata/retrieve/MetadataMir;", 
 								 method=theMethodString,
@@ -60,24 +60,24 @@ getMirs_Metadata_internal <- function(theId, theDataDir, theMethodString, theVer
 #### uses mirs from data file
 ####
 
-getMirs_List_Mir <- function(theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMirs_List_Mir <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getMirs_List_internal(theDataDir, 'getMirList', theVerboseFlag=theVerboseFlag)
+	getMirs_List_internal(theZipFile, 'getMirList', theVerboseFlag=theVerboseFlag)
 }
 
-getMirs_List_Mimat <- function(theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMirs_List_Mimat <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getMirs_List_internal(theDataDir, 'getMimatList', theVerboseFlag=theVerboseFlag)
+	getMirs_List_internal(theZipFile, 'getMimatList', theVerboseFlag=theVerboseFlag)
 }
 
-getMirs_Metadata_Mir <- function(theMirId, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMirs_Metadata_Mir <- function(theMirId, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getMirs_Metadata_internal(theMirId, theDataDir, 'getMetadata_miRNA_mir', theVerboseFlag=theVerboseFlag)
+	getMirs_Metadata_internal(theMirId, theZipFile, 'getMetadata_miRNA_mir', theVerboseFlag=theVerboseFlag)
 }
 
-getMirs_Metadata_Mimat <- function(theMimatId, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMirs_Metadata_Mimat <- function(theMimatId, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getMirs_Metadata_internal(theMimatId, theDataDir, 'getMetadata_miRNA_mimat', theVerboseFlag=theVerboseFlag)
+	getMirs_Metadata_internal(theMimatId, theZipFile, 'getMetadata_miRNA_mimat', theVerboseFlag=theVerboseFlag)
 }
 
 

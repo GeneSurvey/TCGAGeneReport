@@ -4,11 +4,11 @@
 \title{getOneToOne_UCSC_List}
 \description{Get a sorted list of UCSC ids from the one to one mapping}
 \usage{
-getOneToOne_UCSC_List(theIdDataDir = "/rsrch1/bcb/batcheffects/GENE_REPORT/iddata/downloads", theVerboseFlag = FALSE)
+getOneToOne_UCSC_List(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{theIdDataDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/iddata/downloads". NOTE: this is a subdirectory of GENE_REPORT. }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". NOTE: this is a subdirectory of GENE_REPORT. }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
 }
 \details{
@@ -40,10 +40,10 @@ A Vector of strings.
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (theIdDataDir = "/rsrch1/bcb/batcheffects/GENE_REPORT/iddata/downloads", 
+function (theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
     theVerboseFlag = FALSE) 
 {
-    getOneToOne_List_internal(theIdDataDir, "getOneToOne_UCSC_List", 
+    getOneToOne_List_internal(theZipFile, "getOneToOne_UCSC_List", 
         theVerboseFlag = theVerboseFlag)
   }
 }

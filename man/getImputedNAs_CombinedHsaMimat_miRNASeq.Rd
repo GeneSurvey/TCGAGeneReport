@@ -6,12 +6,12 @@
 Get a matrix of boolean values. A true in this matrix indicates that value is an NA which was added when the Gene Survey data was created.
 }
 \usage{
-getImputedNAs_CombinedHsaMimat_miRNASeq(theGeneEq, theGeneReportDir = "/rsrch1/bcb/batcheffects/GENE_REPORT", theRemoveDupFlag = TRUE, theVerboseFlag = FALSE)
+getImputedNAs_CombinedHsaMimat_miRNASeq(theGeneEq, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theRemoveDupFlag = TRUE, theVerboseFlag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{theGeneEq}{ A vector of combined HSA and MIMAT id names as found in the getNames_ function for this data type. This consists of ids similar to "hsa-mir-663.MIMAT0003326" and "hsa-mir-663b.MIMAT0005867". This means a single HSA format id can have multiple entries (MIMAT ids). }
-  \item{theGeneReportDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT". }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". }
   \item{theRemoveDupFlag}{ Default: FALSE. Remove the duplicate barcodes from the same control samples used in different diseases. }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
 }

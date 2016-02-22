@@ -12,29 +12,29 @@
 #################################################################
 #################################################################
 
-getImputedNAs_GeneEq_internal <- function(theGeneEqList, theGeneReportDir, theRemoveDupFlag, theMethodString, 
+getImputedNAs_GeneEq_internal <- function(theGeneEqList, theZipFile, theRemoveDupFlag, theMethodString, 
 																		theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	results <- NULL
-	jObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/GetImputedNAsMatrix", file.path(theGeneReportDir, "combined"))
-	result <- .jcall(jObj, returnSig = "Z", method=theMethodString, 
+	jObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
+	result <- .jcall(jObj, returnSig = "Lorg/mda/bcb/tcgagsdata/retrieve/GetImputedNAsMatrix;", method=theMethodString, 
 									 .jarray(as.vector(as.character(theGeneEqList))))
-	if(TRUE==result)
+	if(FALSE==is.jnull(result))
 	{
-		results <- matrixWithIssues(jObj$mGenesBySamplesValues, nrow=length(jObj$mGenes))
-		colnames(results) <- jObj$mSamples
-		rownames(results) <- jObj$mGenes
-	}
-	if (theRemoveDupFlag==TRUE)
-	{
-		rNames <- rownames(results)
-		cNames <- colnames(results)[!duplicated(colnames(results))]
-		results <- results[,!duplicated(colnames(results))]
-		# have to do this as above line removes "matrixness" from matrix with single row
-		results <- matrixWithIssues(as.vector(unlist(results)), nrow=length(rNames))
-		colnames(results) <- cNames
-		rownames(results) <- rNames
+		results <- matrixWithIssues(result$mGenesBySamplesValues, nrow=length(result$mGenes))
+		colnames(results) <- result$mSamples
+		rownames(results) <- result$mGenes
+		if (theRemoveDupFlag==TRUE)
+		{
+			rNames <- rownames(results)
+			cNames <- colnames(results)[!duplicated(colnames(results))]
+			results <- results[,!duplicated(colnames(results))]
+			# have to do this as above line removes "matrixness" from matrix with single row
+			results <- matrixWithIssues(as.vector(unlist(results)), nrow=length(rNames))
+			colnames(results) <- cNames
+			rownames(results) <- rNames
+		}
 	}
 	results
 }
@@ -49,75 +49,75 @@ getImputedNAs_GeneEq_internal <- function(theGeneEqList, theGeneReportDir, theRe
 #### uses gene equivalent from data file
 ####
 
-getImputedNAs_GeneSymbol_RnaSeq2 <- function(theGeneEq, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getImputedNAs_GeneSymbol_RnaSeq2 <- function(theGeneEq, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																			 theRemoveDupFlag=TRUE, theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	# getImputedNAs_RnaSeq2 -> getImputedNAsMatrix_RnaSeq2
-	getImputedNAs_GeneEq_internal(theGeneEq, theGeneReportDir, theRemoveDupFlag, 'getImputedNAsMatrix_RnaSeq2', 
+	getImputedNAs_GeneEq_internal(theGeneEq, theZipFile, theRemoveDupFlag, 'getImputedNAsMatrix_RnaSeq2', 
 													theVerboseFlag=theVerboseFlag)
 }
 
-getImputedNAs_GeneSymbol_RnaSeq <- function(theGeneEq, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getImputedNAs_GeneSymbol_RnaSeq <- function(theGeneEq, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																			theRemoveDupFlag=TRUE, theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	# getImputedNAs_RnaSeq -> getImputedNAsMatrix_RnaSeq
-	getImputedNAs_GeneEq_internal(theGeneEq, theGeneReportDir, theRemoveDupFlag, 'getImputedNAsMatrix_RnaSeq', 
+	getImputedNAs_GeneEq_internal(theGeneEq, theZipFile, theRemoveDupFlag, 'getImputedNAsMatrix_RnaSeq', 
 													theVerboseFlag=theVerboseFlag)
 }
 
-getImputedNAs_GeneSymbol_SNP6 <- function(theGeneEq, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getImputedNAs_GeneSymbol_SNP6 <- function(theGeneEq, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																		theRemoveDupFlag=TRUE, theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	# getImputedNAs_SNP6 -> getImputedNAsMatrix_SNP6
-	getImputedNAs_GeneEq_internal(theGeneEq, theGeneReportDir, theRemoveDupFlag, 'getImputedNAsMatrix_SNP6', 
+	getImputedNAs_GeneEq_internal(theGeneEq, theZipFile, theRemoveDupFlag, 'getImputedNAsMatrix_SNP6', 
 													theVerboseFlag=theVerboseFlag)
 }
 
-getImputedNAs_Probe_Meth450 <- function(theGeneEq, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getImputedNAs_Probe_Meth450 <- function(theGeneEq, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																	theRemoveDupFlag=TRUE, theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	# getImputedNAs_Meth450 -> getImputedNAsMatrix_Meth450
-	getImputedNAs_GeneEq_internal(theGeneEq, theGeneReportDir, theRemoveDupFlag, 'getImputedNAsMatrix_Meth450', 
+	getImputedNAs_GeneEq_internal(theGeneEq, theZipFile, theRemoveDupFlag, 'getImputedNAsMatrix_Meth450', 
 													theVerboseFlag=theVerboseFlag)
 }
 
-getImputedNAs_Probe_Meth27 <- function(theGeneEq, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getImputedNAs_Probe_Meth27 <- function(theGeneEq, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																 theRemoveDupFlag=TRUE, theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	# getImputedNAs_Meth27 -> getImputedNAsMatrix_Meth27
-	getImputedNAs_GeneEq_internal(theGeneEq, theGeneReportDir, theRemoveDupFlag, 'getImputedNAsMatrix_Meth27', 
+	getImputedNAs_GeneEq_internal(theGeneEq, theZipFile, theRemoveDupFlag, 'getImputedNAsMatrix_Meth27', 
 													theVerboseFlag=theVerboseFlag)
 }
 
-getImputedNAs_CombinedHsaMimat_miRNASeq <- function(theGeneEq, theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+getImputedNAs_CombinedHsaMimat_miRNASeq <- function(theGeneEq, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																							theRemoveDupFlag=TRUE, theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGeneEq))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theRemoveDupFlag)||(FALSE==theRemoveDupFlag))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	# getImputedNAs_miRNASeq -> getImputedNAsMatrix_miRNASeq
-	getImputedNAs_GeneEq_internal(theGeneEq, theGeneReportDir, theRemoveDupFlag, 'getImputedNAsMatrix_miRNASeq', 
+	getImputedNAs_GeneEq_internal(theGeneEq, theZipFile, theRemoveDupFlag, 'getImputedNAsMatrix_miRNASeq', 
 													theVerboseFlag=theVerboseFlag)
 }
 

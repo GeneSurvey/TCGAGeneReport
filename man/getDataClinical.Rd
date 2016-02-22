@@ -8,11 +8,11 @@ getDataClinical
 Get a matrix of clinical data. Rownames are patient ids. Colnames are data names. Colnames will vary depending on data from Standardized Data.
 }
 \usage{
-getDataClinical(theCombinedDir = "/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag = FALSE)
+getDataClinical(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{theCombinedDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/combined". NOTE: This is a subdirectory of the main GENE_REPORT directory. }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". NOTE: This is a subdirectory of the main GENE_REPORT directory. }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
 }
 \details{
@@ -42,10 +42,10 @@ Get a matrix of clinical data. Rownames are patient ids. Colnames are data names
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (theCombinedDir = "/rsrch1/bcb/batcheffects/GENE_REPORT/combined", 
+function (theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
     theVerboseFlag = FALSE) 
 {
-    getDataClinical_internal(theCombinedDir, theVerboseFlag = theVerboseFlag)
+    getDataClinical_internal(theZipFile, theVerboseFlag = theVerboseFlag)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

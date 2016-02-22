@@ -29,40 +29,20 @@ getMetadata_Gene_JavaToR <- function(theJavaObj)
 						 theStrand=strandVal))
 }
 
-getMetadata_Gene_internal_OLD_SINGLERESULT <- function(theGene, theDataDir, theMethodString, theVerboseFlag)
+getMetadata_Gene_internal <- function(theGene, theZipFile, theMethodString, theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	# class objects in a vector are always a list, not a vector
 	listResults <- lapply(theGene, function(myGene)
 	{
 		results <- NULL
-		jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/MetadataGene", theDataDir)
-		foundFlag <- .jcall(jReadGeneObj, returnSig = "Z", method=theMethodString, 
-												.jnew("java/lang/String",myGene))
-		if(TRUE==foundFlag)
-		{
-			results <- getMetadata_Gene_JavaToR(jReadGeneObj)
-		}
-		results
-	})
-	names(listResults) <- theGene
-	listResults
-}
-
-getMetadata_Gene_internal <- function(theGene, theDataDir, theMethodString, theVerboseFlag)
-{
-	setJavaVerboseFlag(theVerboseFlag)
-	# class objects in a vector are always a list, not a vector
-	listResults <- lapply(theGene, function(myGene)
-	{
-		results <- NULL
-		jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/MetadataGene", theDataDir)
+		jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 		resultArray <- .jcall(jReadGeneObj, returnSig = "[Lorg/mda/bcb/tcgagsdata/retrieve/MetadataGene;",
 													method=theMethodString, 
 													.jnew("java/lang/String",myGene))
-		for(jReadGeneObj in resultArray)
+		for(resObj in resultArray)
 		{
-			results <- c(results, getMetadata_Gene_JavaToR(jReadGeneObj))
+			results <- c(results, getMetadata_Gene_JavaToR(resObj))
 		}
 		results
 	})
@@ -80,29 +60,29 @@ getMetadata_Gene_internal <- function(theGene, theDataDir, theMethodString, theV
 #### specific probes
 ####
 
-getMetadata_Gene_Mutations <- function(theGene, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadata_Gene_Mutations <- function(theGene, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGene))
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getMetadata_Gene_internal(theGene, theDataDir, 'getMetadataList_Mutations', theVerboseFlag=theVerboseFlag)
+	getMetadata_Gene_internal(theGene, theZipFile, 'getMetadataList_Mutations', theVerboseFlag=theVerboseFlag)
 }
 
 
-getMetadata_Gene_RnaSeq <- function(theGene, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadata_Gene_RnaSeq <- function(theGene, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGene))
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getMetadata_Gene_internal(theGene, theDataDir, 'getMetadataList_RNASeq', theVerboseFlag=theVerboseFlag)
+	getMetadata_Gene_internal(theGene, theZipFile, 'getMetadataList_RNASeq', theVerboseFlag=theVerboseFlag)
 }
 
-getMetadata_Gene_RnaSeq2 <- function(theGene, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadata_Gene_RnaSeq2 <- function(theGene, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGene))
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getMetadata_Gene_internal(theGene, theDataDir, 'getMetadataList_RNASeqV2', theVerboseFlag=theVerboseFlag)
+	getMetadata_Gene_internal(theGene, theZipFile, 'getMetadataList_RNASeqV2', theVerboseFlag=theVerboseFlag)
 }
 
 ####
@@ -111,22 +91,22 @@ getMetadata_Gene_RnaSeq2 <- function(theGene, theDataDir="/rsrch1/bcb/batcheffec
 
 getMetadata_GeneByNeighbor_RnaSeq <- function(theStartPosition, theStopPosition, 
 																							theChromosome, theStrand,
-																							theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", 
+																							theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																							theVerboseFlag=FALSE)
 {
 	stopifnot(is.numeric(theStartPosition))
 	stopifnot(is.numeric(theStopPosition))
 	stopifnot(is.character(theChromosome))
 	stopifnot(is.character(theStrand))
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	setJavaVerboseFlag(theVerboseFlag)
 	results <- NULL
 	verboseMessage("getMetadata_GeneByNeighbor_RnaSeq started", theVerboseFlag=theVerboseFlag)
-	jFindNeighborObj <- .jnew("org/mda/bcb/tcgagsdata/neighbors/FN_RNASeq", theDataDir)
+	jFindNeighborObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 	resultArray <- .jcall(jFindNeighborObj, 
 												returnSig = "[Lorg/mda/bcb/tcgagsdata/retrieve/MetadataGene;", 
-												method="findNeighbors", 
+												method="findNeighbors_RnaSeq", 
 												.jlong(theStartPosition), 
 												.jlong(theStopPosition),
 												.jnew("java/lang/String",theChromosome),
@@ -147,22 +127,22 @@ getMetadata_GeneByNeighbor_RnaSeq <- function(theStartPosition, theStopPosition,
 
 getMetadata_GeneByNeighbor_RnaSeq2 <- function(theStartPosition, theStopPosition, 
 																							theChromosome, theStrand,
-																							theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", 
+																							theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																							theVerboseFlag=FALSE)
 {
 	stopifnot(is.numeric(theStartPosition))
 	stopifnot(is.numeric(theStopPosition))
 	stopifnot(is.character(theChromosome))
 	stopifnot(is.character(theStrand))
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	setJavaVerboseFlag(theVerboseFlag)
 	results <- NULL
 	verboseMessage("getMetadata_GeneByNeighbor_RnaSeq2 started", theVerboseFlag=theVerboseFlag)
-	jFindNeighborObj <- .jnew("org/mda/bcb/tcgagsdata/neighbors/FN_RNASeqV2", theDataDir)
+	jFindNeighborObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 	resultArray <- .jcall(jFindNeighborObj, 
 												returnSig = "[Lorg/mda/bcb/tcgagsdata/retrieve/MetadataGene;", 
-												method="findNeighbors", 
+												method= "findNeighbors_RnaSeq2", 
 												.jlong(theStartPosition), 
 												.jlong(theStopPosition),
 												.jnew("java/lang/String",theChromosome),

@@ -1,8 +1,8 @@
 Package: TCGAGeneReport
 Type: Package
 Title: Access to Gene Report Data
-Version: 2.9
-Date: 2015-11-02
+Version: 2.11
+Date: 2015-12-28
 Author: Tod Casasent <tdcasasent@mdanderson.org>
 Maintainer: Keith Baggerly <kabagger@mdanderson.org>
 Depends: R (>= 3.1.0), rJava, Cairo, gplots, methods

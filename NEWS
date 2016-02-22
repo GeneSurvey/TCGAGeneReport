@@ -5,6 +5,19 @@
 	*						 *
 	**************************************************
 
+		CHANGES IN R VERSION 2.11
+
+NEW FEATURES
+
+    o	Use ZIP file for data
+    o	Use package for JAR files
+
+		CHANGES IN R VERSION 2.10
+
+NEW FEATURES
+
+    o	Handle heatmaps with all NaN
+
 		CHANGES IN R VERSION 2.9
 
 NEW FEATURES

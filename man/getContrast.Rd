@@ -6,7 +6,7 @@
 Give two genes and two assays (platforms), match up the data by sample/patient, calculate the correlations, print scatterplots, and return the correlations and data used for them.
 }
 \usage{
-getContrast(theOutdir, theGene1, theAssay1, theGene2, theAssay2, theGeneReportDir = "/rsrch1/bcb/batcheffects/GENE_REPORT", theMethod = "spearman", theUse = "pairwise.complete.obs", theUseDeltaFlag = FALSE, theRemoveDupFlag = TRUE, theVerboseFlag = FALSE)
+getContrast(theOutdir, theGene1, theAssay1, theGene2, theAssay2, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theMethod = "spearman", theUse = "pairwise.complete.obs", theUseDeltaFlag = FALSE, theRemoveDupFlag = TRUE, theVerboseFlag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,7 +15,7 @@ getContrast(theOutdir, theGene1, theAssay1, theGene2, theAssay2, theGeneReportDi
   \item{theAssay1}{One of Meth450, Meth27, miRNASeq, SNP6, RnaSeq, or RnaSeq2}
   \item{theGene2}{Gene or gene equivalent, which should match the gene equivalents for the matching assay}
   \item{theAssay2}{One of Meth450, Meth27, miRNASeq, SNP6, RnaSeq, or RnaSeq2}
-  \item{theGeneReportDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT". }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". }
   \item{theMethod}{Default: "spearman". Value for the method argument to cor: "pearson", "kendall", "spearman"}
   \item{theUse}{Default: "pairwise.complete.obs". Value for the use argument to cor: "everything", "all.obs", "complete.obs", "na.or.complete", "pairwise.complete.obs"}
   \item{theUseDeltaFlag}{ Default: FALSE. A flag indicating to use the differences in value between tumor and normal samples. }

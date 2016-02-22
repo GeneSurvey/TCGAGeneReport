@@ -8,11 +8,11 @@ getDataVersion
 Get a time-stamp version number string for the current data version.
 }
 \usage{
-getDataVersion(theCombinedDir = "/rsrch1/bcb/batcheffects/GENE_REPORT/combined")
+getDataVersion(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{theCombinedDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/combined". NOTE: This is a subdirectory of the main GENE_REPORT directory. }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". NOTE: This is a subdirectory of the main GENE_REPORT directory. }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~

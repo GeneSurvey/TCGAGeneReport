@@ -12,16 +12,16 @@
 #################################################################
 #################################################################
 
-getMetadataPop_internal <- function(theDataDir, theMethodString, theVerboseFlag)
+getMetadataPop_internal <- function(theZipFile, theMethodString, theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	results <- NULL
-	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/MetadataPop", theDataDir)
-	result <- .jcall(jReadGeneObj, returnSig = "Z", method=theMethodString)
-	if(TRUE==result)
+	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
+	result <- .jcall(jReadGeneObj, returnSig = "Lorg/mda/bcb/tcgagsdata/retrieve/MetadataPop;", method=theMethodString)
+	if(FALSE==is.jnull(result))
 	{
-		results <- jReadGeneObj$mValues
-		names(results) <- jReadGeneObj$mIds
+		results <- result$mValues
+		names(results) <- result$mIds
 	}
 	results
 }
@@ -32,32 +32,32 @@ getMetadataPop_internal <- function(theDataDir, theMethodString, theVerboseFlag)
 #################################################################
 #################################################################
 
-getMetadataPop_BarcodeDisease <- function(theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadataPop_BarcodeDisease <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getMetadataPop_internal(theDataDir, 'getMetadataPop_BarcodeDisease', theVerboseFlag=theVerboseFlag)
+	getMetadataPop_internal(theZipFile, 'getMetadataPop_BarcodeDisease', theVerboseFlag=theVerboseFlag)
 }
 
-getMetadataPop_BarcodeSamplecode <- function(theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadataPop_BarcodeSamplecode <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getMetadataPop_internal(theDataDir, 'getMetadataPop_BarcodeSamplecode', theVerboseFlag=theVerboseFlag)
+	getMetadataPop_internal(theZipFile, 'getMetadataPop_BarcodeSamplecode', theVerboseFlag=theVerboseFlag)
 }
 
-getMetadataPop_PatientDisease <- function(theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadataPop_PatientDisease <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getMetadataPop_internal(theDataDir, 'getMetadataPop_PatientDisease', theVerboseFlag=theVerboseFlag)
+	getMetadataPop_internal(theZipFile, 'getMetadataPop_PatientDisease', theVerboseFlag=theVerboseFlag)
 }
 
 ### used outside this file, but not exported
 
-getMetadataPop_BarcodeDisease_forList <- function(theList, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadataPop_BarcodeDisease_forList <- function(theList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	results <- getMetadataPop_BarcodeDisease(theDataDir, theVerboseFlag=theVerboseFlag)
+	results <- getMetadataPop_BarcodeDisease(theZipFile, theVerboseFlag=theVerboseFlag)
 	results <- results[theList]
 	names(results) <- theList
 	results <- as.vector(unlist(lapply(results, function(theVal)
@@ -72,9 +72,9 @@ getMetadataPop_BarcodeDisease_forList <- function(theList, theDataDir="/rsrch1/b
 	results
 }
 
-getMetadataPop_BarcodeSamplecode_forList <- function(theList, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadataPop_BarcodeSamplecode_forList <- function(theList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	results <- getMetadataPop_BarcodeSamplecode(theDataDir, theVerboseFlag=theVerboseFlag)
+	results <- getMetadataPop_BarcodeSamplecode(theZipFile, theVerboseFlag=theVerboseFlag)
 	results <- results[theList]
 	names(results) <- theList
 	results <- as.vector(unlist(lapply(results, function(theVal)
@@ -89,9 +89,9 @@ getMetadataPop_BarcodeSamplecode_forList <- function(theList, theDataDir="/rsrch
 	results
 }
 
-getMetadataPop_PatientDisease_forList <- function(theList, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadataPop_PatientDisease_forList <- function(theList, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	results <- getMetadataPop_PatientDisease(theDataDir, theVerboseFlag=theVerboseFlag)
+	results <- getMetadataPop_PatientDisease(theZipFile, theVerboseFlag=theVerboseFlag)
 	results <- results[theList]
 	names(results) <- theList
 	results <- as.vector(unlist(lapply(results, function(theVal)

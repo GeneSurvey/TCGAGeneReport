@@ -73,7 +73,7 @@ plotAssayByDisease <- function(theData1, theData2, theDisease1, theDisease2, the
 #################################################################
 
 plotAssays <- function(theGene1, theGene2, theAssay1, theAssay2, theOutputDir, 
-											 theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+											 theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 											 theUseDeltaFlag=FALSE, theRemoveDupFlag=TRUE, theVerboseFlag=FALSE)
 {
 	# much if this is taken from the getContract file. These might need to share more at some point
@@ -88,15 +88,15 @@ plotAssays <- function(theGene1, theGene2, theAssay1, theAssay2, theOutputDir,
 	stopifnot(theAssay1 %in% c("Mutations", "RnaSeq2", "RnaSeq", "SNP6", "Meth450", "Meth27", "miRNASeq"))
 	stopifnot(theAssay2 %in% c("Mutations", "RnaSeq2", "RnaSeq", "SNP6", "Meth450", "Meth27", "miRNASeq"))
 	stopifnot(isValidDirectoryPath(theOutputDir))
-	stopifnot(isValidDirectoryPath(theGeneReportDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	stopifnot((TRUE==theUseDeltaFlag)||(FALSE==theUseDeltaFlag))
 	#
 	dir.create(theOutputDir, recursive = TRUE, showWarnings=FALSE)
 	#######################################
 	# get the data
-	data1 <- getContrastData(theGene1, theAssay1, theGeneReportDir, theUseDeltaFlag, theRemoveDupFlag, theVerboseFlag)
-	data2 <- getContrastData(theGene2, theAssay2, theGeneReportDir, theUseDeltaFlag, theRemoveDupFlag, theVerboseFlag)
+	data1 <- getContrastData(theGene1, theAssay1, theZipFile, theUseDeltaFlag, theRemoveDupFlag, theVerboseFlag)
+	data2 <- getContrastData(theGene2, theAssay2, theZipFile, theUseDeltaFlag, theRemoveDupFlag, theVerboseFlag)
 	#######################################
 	# get the disease values for samples (or patient ids)
 	disease1 <- NULL
@@ -104,12 +104,12 @@ plotAssays <- function(theGene1, theGene2, theAssay1, theAssay2, theOutputDir,
 	if (TRUE==theUseDeltaFlag)
 	{
 		# patient ids
-		disease1 <- getMetadataPop_PatientDisease_forList(colnames(data1), theDataDir=file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
-		disease2 <- getMetadataPop_PatientDisease_forList(colnames(data2), theDataDir=file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+		disease1 <- getMetadataPop_PatientDisease_forList(colnames(data1), theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
+		disease2 <- getMetadataPop_PatientDisease_forList(colnames(data2), theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
 	} else {
 		# barcodes (samples)
-		disease1 <- getMetadataPop_BarcodeDisease_forList(colnames(data1), theDataDir=file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
-		disease2 <- getMetadataPop_BarcodeDisease_forList(colnames(data2), theDataDir=file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+		disease1 <- getMetadataPop_BarcodeDisease_forList(colnames(data1), theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
+		disease2 <- getMetadataPop_BarcodeDisease_forList(colnames(data2), theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	#######################################
 	# remove UNK data

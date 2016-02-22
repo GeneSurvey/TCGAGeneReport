@@ -32,20 +32,20 @@ getMetadata_HG_JavaToR <- function(theJavaObj)
 						 theStrand=strandVal))
 }
 
-getMetadata_HG_internal <- function(theGene, theDataDir, theMethodString, theVerboseFlag)
+getMetadata_HG_internal <- function(theGene, theZipFile, theMethodString, theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
 	# class objects in a vector are always a list, not a vector
 	listResults <- lapply(theGene, function(myGene)
 	{
 		results <- NULL
-		jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/MetadataGene", theDataDir)
+		jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 		resultArray <- .jcall(jReadGeneObj, returnSig = "[Lorg/mda/bcb/tcgagsdata/retrieve/MetadataGene;",
 													method=theMethodString, 
 													.jnew("java/lang/String",myGene))
-		for(myObj in resultArray)
+		for(resObj in resultArray)
 		{
-			results <- c(results, getMetadata_HG_JavaToR(myObj))
+			results <- c(results, getMetadata_Gene_JavaToR(resObj))
 		}
 		results
 	})
@@ -63,20 +63,20 @@ getMetadata_HG_internal <- function(theGene, theDataDir, theMethodString, theVer
 #### specific probes
 ####
 
-getMetadata_Gene_HG19 <- function(theGene, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadata_Gene_HG19 <- function(theGene, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGene))
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getMetadata_HG_internal(theGene, theDataDir, 'getMetadataList_HG19', theVerboseFlag=theVerboseFlag)
+	getMetadata_HG_internal(theGene, theZipFile, 'getMetadataList_HG19', theVerboseFlag=theVerboseFlag)
 }
 
-getMetadata_Gene_HG18 <- function(theGene, theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getMetadata_Gene_HG18 <- function(theGene, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(is.character(theGene))
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getMetadata_HG_internal(theGene, theDataDir, 'getMetadataList_HG18', theVerboseFlag=theVerboseFlag)
+	getMetadata_HG_internal(theGene, theZipFile, 'getMetadataList_HG18', theVerboseFlag=theVerboseFlag)
 }
 
 ####
@@ -85,22 +85,22 @@ getMetadata_Gene_HG18 <- function(theGene, theDataDir="/rsrch1/bcb/batcheffects/
 
 getMetadata_GeneByNeighbor_HG18 <- function(theStartPosition, theStopPosition, 
 																							theChromosome, theStrand,
-																							theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", 
+																							theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																							theVerboseFlag=FALSE)
 {
 	stopifnot(is.numeric(theStartPosition))
 	stopifnot(is.numeric(theStopPosition))
 	stopifnot(is.character(theChromosome))
 	stopifnot(is.character(theStrand))
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	setJavaVerboseFlag(theVerboseFlag)
 	results <- NULL
 	verboseMessage("getMetadata_GeneByNeighbor_HG18 started", theVerboseFlag=theVerboseFlag)
-	jFindNeighborObj <- .jnew("org/mda/bcb/tcgagsdata/neighbors/GS_HG18", theDataDir)
+	jFindNeighborObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 	resultArray <- .jcall(jFindNeighborObj, 
 												returnSig = "[Lorg/mda/bcb/tcgagsdata/retrieve/MetadataGene;", 
-												method="findNeighbors", 
+												method="findNeighbors_HG18", 
 												.jlong(theStartPosition), 
 												.jlong(theStopPosition),
 												.jnew("java/lang/String",theChromosome),
@@ -121,22 +121,22 @@ getMetadata_GeneByNeighbor_HG18 <- function(theStartPosition, theStopPosition,
 
 getMetadata_GeneByNeighbor_HG19 <- function(theStartPosition, theStopPosition, 
 																							 theChromosome, theStrand,
-																							 theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", 
+																							 theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 																							 theVerboseFlag=FALSE)
 {
 	stopifnot(is.numeric(theStartPosition))
 	stopifnot(is.numeric(theStopPosition))
 	stopifnot(is.character(theChromosome))
 	stopifnot(is.character(theStrand))
-	stopifnot(isValidDirectoryPath(theDataDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
 	setJavaVerboseFlag(theVerboseFlag)
 	results <- NULL
 	verboseMessage("getMetadata_GeneByNeighbor_HG19 started", theVerboseFlag=theVerboseFlag)
-	jFindNeighborObj <- .jnew("org/mda/bcb/tcgagsdata/neighbors/GS_HG19", theDataDir)
+	jFindNeighborObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 	resultArray <- .jcall(jFindNeighborObj, 
 												returnSig = "[Lorg/mda/bcb/tcgagsdata/retrieve/MetadataGene;", 
-												method="findNeighbors", 
+												method="findNeighbors_HG19", 
 												.jlong(theStartPosition), 
 												.jlong(theStopPosition),
 												.jnew("java/lang/String",theChromosome),

@@ -6,7 +6,7 @@
 Get the metadata about the gene(s) within a given range.
 }
 \usage{
-getMetadata_GeneByNeighbor_HG18(theStartPosition, theStopPosition, theChromosome, theStrand, theDataDir = "/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag = FALSE)
+getMetadata_GeneByNeighbor_HG18(theStartPosition, theStopPosition, theChromosome, theStrand, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -14,7 +14,7 @@ getMetadata_GeneByNeighbor_HG18(theStartPosition, theStopPosition, theChromosome
   \item{theStopPosition}{ Inclusive position to stop search. }
   \item{theChromosome}{ Chromosome (as string) to search, such as "X", "Y", "1", or "21" - NULL skips. }
   \item{theStrand}{Strand as a string "+" or "-" - NULL skips}
-  \item{theDataDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/data". NOTE: this is a subdirectory of GENE_REPORT. }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". NOTE: this is a subdirectory of GENE_REPORT. }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
 }
 \details{

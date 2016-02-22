@@ -10,13 +10,13 @@ Also plots heatmaps for probes.
 Uses the gene symbol in the argument to look up probes and plots for those probes.
 }
 \usage{
-plot_GeneSymbol_Meth450(theGene, theOutputDir, theGeneReportDir = "/rsrch1/bcb/batcheffects/GENE_REPORT", theVerboseFlag = FALSE, theUseDeltaFlag = FALSE, theReplicateFlag=FALSE)
+plot_GeneSymbol_Meth450(theGene, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag = FALSE, theUseDeltaFlag = FALSE, theReplicateFlag=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{theGene}{ The gene symbol to plot which corresponds to an id from the appropriate getNames_ function and maps to one or more probes. }
   \item{theOutputDir}{ Directory to which to write files. Directory will be created if needed/possible. }
-  \item{theGeneReportDir}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT". }
+  \item{theZipFile}{ Default: For DQS Servers. If you are on a server where the GENE_REPORT directory is on a different path, you can pass in a value to override the default of "/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip". }
   \item{theVerboseFlag}{ Default: FALSE. TRUE means write all output, which can be very verbose. }
   \item{theUseDeltaFlag}{ Default: FALSE. A flag indicating to use the differences in value between tumor and normal samples. }
   \item{theReplicateFlag}{ Default: FALSE. A flag indicating to write the replicate plots. }
@@ -48,10 +48,10 @@ A list of files output.
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (theGene, theOutputDir, theGeneReportDir = "/rsrch1/bcb/batcheffects/GENE_REPORT", 
+function (theGene, theOutputDir, theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
     theVerboseFlag = FALSE, theUseDeltaFlag = FALSE) 
 {
-    plot_fromGene_internal(theGene, theOutputDir, theGeneReportDir, 
+    plot_fromGene_internal(theGene, theOutputDir, theZipFile, 
         theMapGeneToProbesFunction = getNames_ProbeFromGeneSymbol_Meth450, 
         theReadProbeFunction = getMetadata_Probe_Meth450, theReadGeneFunction = getData_Probe_Meth450, 
         theDataType = "Meth450", theDataTypeLabel = "Beta Value", 

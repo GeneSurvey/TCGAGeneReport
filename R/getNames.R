@@ -12,23 +12,22 @@
 #################################################################
 #################################################################
 
-getNames_internal <- function(theCombinedDir, theMethodString, theVerboseFlag)
+getNames_internal <- function(theZipFile, theMethodString, theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
-	results <- NULL
-	jListGenesObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/GetNamesGeneEq", theCombinedDir)
-	result <- .jcall(jListGenesObj, returnSig = "Z", method=theMethodString)
-	if(TRUE==result)
+	jListGenesObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
+	results <- .jcall(jListGenesObj, returnSig = "[S", method=theMethodString)
+	if(TRUE==is.jnull(results))
 	{
-		results <- jListGenesObj$mGenes
+		results <- NULL;
 	}
 	results
 }
 
-getNamesFromMapping_internal <- function(theDataDir, theMethodString, theVerboseFlag)
+getNamesFromMapping_internal <- function(theZipFile, theMethodString, theVerboseFlag)
 {
 	setJavaVerboseFlag(theVerboseFlag)
-	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/retrieve/GetMapGeneEq", theDataDir)
+	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
 	result <- .jcall(jReadGeneObj, returnSig = "[S", method=theMethodString)
 	if(TRUE==is.jnull(result))
 	{
@@ -51,53 +50,53 @@ getNamesFromMapping_internal <- function(theDataDir, theMethodString, theVerbose
 #### uses gene equivalent from data file
 ####
 
-getNames_GeneSymbol_Mutations <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getNames_GeneSymbol_Mutations <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getNames_internal(theCombinedDir, 'getNames_Mutations', theVerboseFlag=theVerboseFlag)
+	getNames_internal(theZipFile, 'getNames_Mutations', theVerboseFlag=theVerboseFlag)
 }
 
-getNames_GeneSymbol_RnaSeq2 <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getNames_GeneSymbol_RnaSeq2 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getNames_internal(theCombinedDir, 'getNames_RnaSeq2', theVerboseFlag=theVerboseFlag)
+	getNames_internal(theZipFile, 'getNames_RnaSeq2', theVerboseFlag=theVerboseFlag)
 }
 
-getNames_GeneSymbol_RnaSeq <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getNames_GeneSymbol_RnaSeq <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getNames_internal(theCombinedDir, 'getNames_RnaSeq', theVerboseFlag=theVerboseFlag)
+	getNames_internal(theZipFile, 'getNames_RnaSeq', theVerboseFlag=theVerboseFlag)
 }
 
-getNames_GeneSymbol_SNP6 <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getNames_GeneSymbol_SNP6 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getNames_internal(theCombinedDir, 'getNames_SNP6', theVerboseFlag=theVerboseFlag)
+	getNames_internal(theZipFile, 'getNames_SNP6', theVerboseFlag=theVerboseFlag)
 }
 
-getNames_Probe_Meth450 <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getNames_Probe_Meth450 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getNames_internal(theCombinedDir, 'getNames_Meth450', theVerboseFlag=theVerboseFlag)
+	getNames_internal(theZipFile, 'getNames_Meth450', theVerboseFlag=theVerboseFlag)
 }
 
-getNames_Probe_Meth27 <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getNames_Probe_Meth27 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getNames_internal(theCombinedDir, 'getNames_Meth27', theVerboseFlag=theVerboseFlag)
+	getNames_internal(theZipFile, 'getNames_Meth27', theVerboseFlag=theVerboseFlag)
 }
 
-getNames_CombinedHsaMimat_miRNASeq <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getNames_CombinedHsaMimat_miRNASeq <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getNames_internal(theCombinedDir, 'getNames_miRNASeq', theVerboseFlag=theVerboseFlag)
+	getNames_internal(theZipFile, 'getNames_miRNASeq', theVerboseFlag=theVerboseFlag)
 }
 
 ####
 #### uses mapping functions
 ####
 
-getNames_GeneSymbol_Meth450 <- function(theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getNames_GeneSymbol_Meth450 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getNamesFromMapping_internal(theDataDir, 'getMappingGeneSymbols_Meth450', theVerboseFlag=theVerboseFlag)
+	getNamesFromMapping_internal(theZipFile, 'getMappingGeneSymbols_Meth450', theVerboseFlag=theVerboseFlag)
 }
 
-getNames_GeneSymbol_Meth27 <- function(theDataDir="/rsrch1/bcb/batcheffects/GENE_REPORT/data", theVerboseFlag=FALSE)
+getNames_GeneSymbol_Meth27 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	getNamesFromMapping_internal(theDataDir, 'getMappingGeneSymbols_Meth27', theVerboseFlag=theVerboseFlag)
+	getNamesFromMapping_internal(theZipFile, 'getMappingGeneSymbols_Meth27', theVerboseFlag=theVerboseFlag)
 }
 
 #################################################################

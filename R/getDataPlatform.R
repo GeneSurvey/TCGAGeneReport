@@ -11,58 +11,59 @@
 #################################################################
 #################################################################
 
-getDataPlatform_internal <- function(theCombinedDir, thePlatformName, theVerboseFlag)
+getDataPlatform_internal <- function(theZipFile, thePlatformName, theVerboseFlag)
 {
 	platformData <- NULL
-	load(file.path(theCombinedDir, thePlatformName, "platform.RData"), verbose=theVerboseFlag)
+	zippedDataStream <- unz(theZipFile, paste("combined", thePlatformName, "platform.RData", sep="/"))
+	load(filezippedDataStream, verbose=theVerboseFlag)
 	platformData
 }
 
-getDataPlatform_GeneSymbol_Mutations <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getDataPlatform_GeneSymbol_Mutations <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theCombinedDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theCombinedDir, 'mutations', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'mutations', theVerboseFlag=theVerboseFlag)
 }
 
-getDataPlatform_GeneSymbol_RnaSeq2 <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getDataPlatform_GeneSymbol_RnaSeq2 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theCombinedDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theCombinedDir, 'illuminahiseq_rnaseqv2_gene', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'illuminahiseq_rnaseqv2_gene', theVerboseFlag=theVerboseFlag)
 }
 
-getDataPlatform_GeneSymbol_RnaSeq <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getDataPlatform_GeneSymbol_RnaSeq <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theCombinedDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theCombinedDir, 'illuminahiseq_rnaseq_uncGeneRPKM', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'illuminahiseq_rnaseq_uncGeneRPKM', theVerboseFlag=theVerboseFlag)
 }
 
-getDataPlatform_GeneSymbol_SNP6 <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getDataPlatform_GeneSymbol_SNP6 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theCombinedDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theCombinedDir, 'genome_wide_snp_6_hg19nocnvWxy', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'genome_wide_snp_6_hg19nocnvWxy', theVerboseFlag=theVerboseFlag)
 }
 
-getDataPlatform_Probe_Meth450 <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getDataPlatform_Probe_Meth450 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theCombinedDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theCombinedDir, 'humanmethylation450_level3', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'humanmethylation450_level3', theVerboseFlag=theVerboseFlag)
 }
 
-getDataPlatform_Probe_Meth27 <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getDataPlatform_Probe_Meth27 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theCombinedDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theCombinedDir, 'humanmethylation27_hg19Wxy', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'humanmethylation27_hg19Wxy', theVerboseFlag=theVerboseFlag)
 }
 
-getDataPlatform_CombinedHsaMimat_miRNASeq <- function(theCombinedDir="/rsrch1/bcb/batcheffects/GENE_REPORT/combined", theVerboseFlag=FALSE)
+getDataPlatform_CombinedHsaMimat_miRNASeq <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
-	stopifnot(isValidDirectoryPath(theCombinedDir))
+	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theCombinedDir, 'illuminahiseq_mirnaseq_isoform', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'illuminahiseq_mirnaseq_isoform', theVerboseFlag=theVerboseFlag)
 }

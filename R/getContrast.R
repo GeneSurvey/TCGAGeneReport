@@ -10,7 +10,7 @@
 #getContrast("/rsrch1/bcb/batcheffects/DEV/GeneSurvey/output", "TP53", "SNP6", "SRC", "RnaSeq2")
 
 getContrast <- function(theOutdir, theGene1, theAssay1, theGene2, theAssay2, 
-												theGeneReportDir="/rsrch1/bcb/batcheffects/GENE_REPORT", 
+												theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", 
 												theMethod="spearman", theUse="pairwise.complete.obs",
 												theUseDeltaFlag=FALSE, theRemoveDupFlag=TRUE, theVerboseFlag=FALSE)
 {
@@ -21,8 +21,8 @@ getContrast <- function(theOutdir, theGene1, theAssay1, theGene2, theAssay2,
 	dir.create(theOutdir, recursive = TRUE, showWarnings=FALSE)
 	#######################################
 	# get the data
-	data1 <- getContrastData(theGene1, theAssay1, theGeneReportDir, theUseDeltaFlag, theRemoveDupFlag, theVerboseFlag)
-	data2 <- getContrastData(theGene2, theAssay2, theGeneReportDir, theUseDeltaFlag, theRemoveDupFlag, theVerboseFlag)
+	data1 <- getContrastData(theGene1, theAssay1, theZipFile, theUseDeltaFlag, theRemoveDupFlag, theVerboseFlag)
+	data2 <- getContrastData(theGene2, theAssay2, theZipFile, theUseDeltaFlag, theRemoveDupFlag, theVerboseFlag)
 	#######################################
 	# get the disease values for samples (or patient ids)
 	disease1 <- NULL
@@ -30,12 +30,12 @@ getContrast <- function(theOutdir, theGene1, theAssay1, theGene2, theAssay2,
 	if (TRUE==theUseDeltaFlag)
 	{
 		# patient ids
-		disease1 <- getMetadataPop_PatientDisease_forList(colnames(data1), theDataDir=file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
-		disease2 <- getMetadataPop_PatientDisease_forList(colnames(data2), theDataDir=file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+		disease1 <- getMetadataPop_PatientDisease_forList(colnames(data1), theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
+		disease2 <- getMetadataPop_PatientDisease_forList(colnames(data2), theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
 	} else {
 		# barcodes (samples)
-		disease1 <- getMetadataPop_BarcodeDisease_forList(colnames(data1), theDataDir=file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
-		disease2 <- getMetadataPop_BarcodeDisease_forList(colnames(data2), theDataDir=file.path(theGeneReportDir, "data"), theVerboseFlag=theVerboseFlag)
+		disease1 <- getMetadataPop_BarcodeDisease_forList(colnames(data1), theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
+		disease2 <- getMetadataPop_BarcodeDisease_forList(colnames(data2), theZipFile=theZipFile, theVerboseFlag=theVerboseFlag)
 	}
 	#######################################
 	# remove UNK data
@@ -169,36 +169,36 @@ getDiseaseData <- function(theData, theDiseaseList, theDisease)
 	theData[,myids, drop=FALSE]
 }
 
-getContrastData <- function(theGene, theAssay, theGeneReportDir, theUseDeltaFlag, theRemoveDupFlag, theVerboseFlag)
+getContrastData <- function(theGene, theAssay, theZipFile, theUseDeltaFlag, theRemoveDupFlag, theVerboseFlag)
 {
 	results <- NULL
 	if ("Meth450"==theAssay)
 	{
-		results <- getData_Probe_Meth450(theGene, theGeneReportDir, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
+		results <- getData_Probe_Meth450(theGene, theZipFile, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
 	}
 	else if ("miRNASeq"==theAssay)
 	{
-		results <- getData_CombinedHsaMimat_miRNASeq(theGene, theGeneReportDir, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
+		results <- getData_CombinedHsaMimat_miRNASeq(theGene, theZipFile, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
 	}
 	else if ("Meth27"==theAssay)
 	{
-		results <- getData_Probe_Meth27(theGene, theGeneReportDir, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
+		results <- getData_Probe_Meth27(theGene, theZipFile, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
 	}
 	else if ("RnaSeq"==theAssay)
 	{
-		results <- getData_GeneSymbol_RnaSeq(theGene, theGeneReportDir, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
+		results <- getData_GeneSymbol_RnaSeq(theGene, theZipFile, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
 	}
 	else if ("RnaSeq2"==theAssay)
 	{
-		results <- getData_GeneSymbol_RnaSeq2(theGene, theGeneReportDir, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
+		results <- getData_GeneSymbol_RnaSeq2(theGene, theZipFile, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
 	}
 	else if ("SNP6"==theAssay)
 	{
-		results <- getData_GeneSymbol_SNP6(theGene, theGeneReportDir, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
+		results <- getData_GeneSymbol_SNP6(theGene, theZipFile, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
 	}
 	else if ("Mutations"==theAssay)
 	{
-		results <- getData_GeneSymbol_Mutations(theGene, theGeneReportDir, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
+		results <- getData_GeneSymbol_Mutations(theGene, theZipFile, theUseDeltaFlag=theUseDeltaFlag, theRemoveDupFlag=theRemoveDupFlag, theVerboseFlag=theVerboseFlag)
 	}
 	results
 }
