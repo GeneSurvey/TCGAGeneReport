@@ -24,8 +24,6 @@ Other distributions will have similar packages. The devtools will indicate what 
 
 As the user with sudo access and which will run RStudio, set the JAVA_HOME variable. (This is the directory above the bin in, for example, /usr/local/jdk1.8.0_45/bin.)
 
-Do a javareconf for R using "sudo -E R CMD javareconf". The "-E" makes sure that sudo uses the current user's environmental variables and may or may not be needed for your installation. Make sure Java 1.8 is registered with R.
-
 #Windows Prerequisites
 
 Do a javareconf for R using "R CMD javareconf". Make sure Java 1.8 is registered with R.
@@ -35,6 +33,7 @@ Windows installations will also need any extras needed for compiling R packages.
 #R Prerequisites
 
 The devtools and rJava package need to be installed.
+
 >install.packages("devtools", dependencies=TRUE)
 
 >install.packages("rJava", dependencies=TRUE)
