@@ -57,4 +57,3 @@ This can be used to test your rJava install and Java version.
 >.jinit()
 
 >J("java.lang.System")$getProperty("java.version")
-
