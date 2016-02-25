@@ -14,7 +14,7 @@ The data file will be available soon.
 
 The TCGAGeneReport package requires Java 1.8.
 
-These instructions have been testing using R 3.2.3 and R 3.2.2.
+These instructions have been tested using R 3.2.3 and R 3.2.2.
 
 #Linux Prerequisites
 
