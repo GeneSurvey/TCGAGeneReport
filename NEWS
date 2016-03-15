@@ -5,6 +5,12 @@
 	*						 *
 	**************************************************
 
+		CHANGES IN R VERSION 2.12
+
+NEW FEATURES
+
+    o	handle new format for HG18/19 mapping files (mutation and SNP6 genomic annotation data)
+
 		CHANGES IN R VERSION 2.11
 
 NEW FEATURES
