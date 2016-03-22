@@ -11,11 +11,24 @@
 #################################################################
 #################################################################
 
-getDataPlatform_internal <- function(theZipFile, thePlatformName, theVerboseFlag)
+readAsGenericMatrix <- function(theZipFile, theMethodString, theVerboseFlag)
 {
-	platformData <- NULL
-	zippedDataStream <- unz(theZipFile, paste("combined", thePlatformName, "platform.RData", sep="/"))
-	load(filezippedDataStream, verbose=theVerboseFlag)
+	setJavaVerboseFlag(theVerboseFlag)
+	results <- NULL
+	jObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
+	result <- .jcall(jObj, returnSig = "Lorg/mda/bcb/tcgagsdata/retrieve/GetMatrixPlatform;", method=theMethodString)
+	if(FALSE==is.jnull(result))
+	{
+		results <- matrixWithIssues(result$mGenesBySamplesValues, nrow=length(result$mGenes))
+		colnames(results) <- result$mSamples
+		rownames(results) <- result$mGenes
+	}
+	results
+}
+
+getDataPlatform_internal <- function(theZipFile, theMethodString, theVerboseFlag)
+{
+	platformData <- readAsGenericMatrix(theZipFile, theMethodString, theVerboseFlag)
 	platformData
 }
 
@@ -23,47 +36,47 @@ getDataPlatform_GeneSymbol_Mutations <- function(theZipFile="/rsrch1/bcb/batchef
 {
 	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theZipFile, 'mutations', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'getDataMatrix_MutationsPlatform', theVerboseFlag=theVerboseFlag)
 }
 
 getDataPlatform_GeneSymbol_RnaSeq2 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theZipFile, 'illuminahiseq_rnaseqv2_gene', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'getDataMatrix_RnaSeq2Platform', theVerboseFlag=theVerboseFlag)
 }
 
 getDataPlatform_GeneSymbol_RnaSeq <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theZipFile, 'illuminahiseq_rnaseq_uncGeneRPKM', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'getDataMatrix_RnaSeqPlatform', theVerboseFlag=theVerboseFlag)
 }
 
 getDataPlatform_GeneSymbol_SNP6 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theZipFile, 'genome_wide_snp_6_hg19nocnvWxy', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'getDataMatrix_SNP6Platform', theVerboseFlag=theVerboseFlag)
 }
 
 getDataPlatform_Probe_Meth450 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theZipFile, 'humanmethylation450_level3', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'getDataMatrix_Meth450Platform', theVerboseFlag=theVerboseFlag)
 }
 
 getDataPlatform_Probe_Meth27 <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theZipFile, 'humanmethylation27_hg19Wxy', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'getDataMatrix_Meth27Platform', theVerboseFlag=theVerboseFlag)
 }
 
 getDataPlatform_CombinedHsaMimat_miRNASeq <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip", theVerboseFlag=FALSE)
 {
 	stopifnot(file.exists(theZipFile))
 	stopifnot((TRUE==theVerboseFlag)||(FALSE==theVerboseFlag))
-	getDataPlatform_internal(theZipFile, 'illuminahiseq_mirnaseq_isoform', theVerboseFlag=theVerboseFlag)
+	getDataPlatform_internal(theZipFile, 'getDataMatrix_miRNASeqPlatform', theVerboseFlag=theVerboseFlag)
 }

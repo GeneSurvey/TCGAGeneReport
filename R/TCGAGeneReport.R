@@ -32,10 +32,10 @@ padChromosomeName <- function(theChr)
 	theChr
 }
 
-initGeneReport <- function(theParameters="-Xms2400m")
+initGeneReport <- function(theParameters="-Xmx2400m")
 {
 	stopifnot(is.character(theParameters))
-	message("TCGAGeneReport 2016-03-11-1300")
+	message("TCGAGeneReport 2016-03-17-1500")
 	message("note: parameters must be in terms of 'm' or .jinit will fail on Linux")
 	message("In testing, -Xmx42000m worked, while larger values caused core exceptions")
 	myJavaJars <- file.path(
@@ -96,8 +96,9 @@ isValidDirectoryPath <- function(thePath)
 getDataVersion <- function(theZipFile="/rsrch1/bcb/batcheffects/GENE_REPORT/GeneSurvey.zip")
 {
 	stopifnot(file.exists(theZipFile))
-	zippedDataStream <- unz(theZipFile, "time.txt")
-	read.csv(zippedDataStream, header=FALSE, stringsAsFactors=FALSE)[[1]]
+	jReadGeneObj <- .jnew("org/mda/bcb/tcgagsdata/CallFromR", theZipFile)
+	results <- .jcall(jReadGeneObj, returnSig = "Ljava/lang/String;", method="getValue_Time")
+	results
 }
 
 #################################################################

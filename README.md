@@ -62,3 +62,6 @@ library(rJava)
 J("java.lang.System")$getProperty("java.version")
 ```
 
+# Other Projects
+
+The TcgaIdConverter and TcgaGSData Java projects are used by this R package. For installing TCGAGeneReport, you do not need to do anything with those projects on GitHub. This R package already has copies of those projects' JAR files.
